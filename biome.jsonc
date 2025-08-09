@@ -1,6 +1,28 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.1.2/schema.json",
   "extends": ["ultracite"],
+  "linter": {
+    "rules": {
+      "correctness": {
+        "useExhaustiveDependencies": "off"
+      },
+      "nursery": {
+        "noShadow": "off"
+      },
+      "suspicious": {
+        "noDocumentCookie": "off",
+        "useAwait": "off"
+      },
+      "style": {
+        "useBlockStatements": "off",
+        "noNestedTernary": "off"
+      },
+      "complexity": {
+        "noForEach": "off",
+        "noExcessiveCognitiveComplexity": "off"
+      }
+    }
+  },
   "assist": {
     "actions": {
       "source": {
@@ -9,6 +31,7 @@
           "options": {
             "groups": [
               [":BUN:", ":NODE:", ":PACKAGE:"],
+              ":BLANK_LINE:",
               ":BLANK_LINE:",
               ["@/**"],
               ":BLANK_LINE:",
