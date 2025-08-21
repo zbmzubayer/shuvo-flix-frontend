@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDownIcon } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
 import type { DropdownNavProps, DropdownProps } from 'react-day-picker';
 
@@ -28,7 +28,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
       <PopoverTrigger asChild>
         <Button className="justify-between font-normal" id="date" variant="outline">
           {value ? value.toLocaleDateString() : 'Select date'}
-          <ChevronDownIcon />
+          <CalendarIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-auto overflow-hidden p-0">

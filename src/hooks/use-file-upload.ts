@@ -11,8 +11,8 @@ import {
 
 export type FileMetadata = {
   name: string;
-  size: number;
-  type: string;
+  size?: number;
+  type?: string;
   url: string;
   id: string;
 };
@@ -90,7 +90,7 @@ export const useFileUpload = (
             maxSize
           )}.`;
         }
-      } else if (file.size > maxSize) {
+      } else if (file.size && file.size > maxSize) {
         return `File "${file.name}" exceeds the maximum size of ${formatBytes(
           maxSize
         )}.`;
@@ -111,7 +111,7 @@ export const useFileUpload = (
           }
           if (type.endsWith("/*")) {
             const baseType = type.split("/")[0];
-            return fileType.startsWith(`${baseType}/`);
+            return fileType?.startsWith(`${baseType}/`);
           }
           return fileType === type;
         });

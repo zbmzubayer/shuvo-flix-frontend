@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 
 import { FileUpload } from '@/components/file-upload';
 import { Button } from '@/components/ui/button';
+import { useDialog } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -23,6 +24,7 @@ import { createService } from '@/services/service.service';
 import { type ServiceDto, serviceSchema } from '@/validations/service.dto';
 
 export function CreateServiceForm() {
+  const { setOpen } = useDialog();
   const [{ files }, { removeFile, openFileDialog, getInputProps }] = useFileUpload({
     accept: 'image/*',
     maxFiles: 1,
@@ -33,14 +35,13 @@ export function CreateServiceForm() {
     defaultValues: { name: '' },
   });
 
-  const { mutateAsync, error } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: createService,
     onSuccess: () => {
-      form.reset();
-      removeFile(files[0].id);
+      setOpen(false);
       toast.success('Service created successfully');
     },
-    onError: () => {
+    onError: (error) => {
       toast.error('Failed to create service', {
         description: error?.message,
       });

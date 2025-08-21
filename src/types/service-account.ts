@@ -8,6 +8,8 @@ export type ServiceAccount = {
   payment: ServiceAccountPayment;
   personalSlots: number;
   sharedSlots: number;
+  soldPersonalSlots: number;
+  soldSharedSlots: number;
   joinDate: Date;
   expiryDate: Date;
   createdAt: Date;

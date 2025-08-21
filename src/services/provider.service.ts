@@ -33,14 +33,20 @@ export const getProviderById = async (id: string) => {
   });
 };
 
-export const updateProvider = async (
-  id: number,
-  data: ProviderDto & { logo: string }
-) => {
-  return await fetchApi<Provider>(`/provider/${id}`, {
-    method: "PUT",
+export const updateProvider = async ({
+  id,
+  data,
+}: {
+  id: number;
+  data: ProviderDto & { logo: string };
+}) => {
+  const res = await fetchApi<Provider>(`/provider/${id}`, {
+    method: "PATCH",
     body: JSON.stringify(data),
   });
+  revalidateTag("providers");
+
+  return res;
 };
 
 export const deleteProvider = async (id: number) => {

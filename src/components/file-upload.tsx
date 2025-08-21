@@ -54,15 +54,14 @@ export function FileUpload({
           )}
         </Button>
         {previewUrl && (
-          <Button
+          <button
             aria-label="Remove image"
-            className="-top-2 -right-2 absolute size-5 rounded-full border border-destructive shadow-none focus-visible:border-destructive"
+            className="-top-2 -right-2 absolute inline-flex size-5 items-center justify-center rounded-full border border-destructive bg-destructive/20"
             onClick={() => removeFile(files[0]?.id)}
-            size="icon"
             type="button"
           >
             <XIcon className="size-3.5 text-destructive" />
-          </Button>
+          </button>
         )}
         <input
           id="file"

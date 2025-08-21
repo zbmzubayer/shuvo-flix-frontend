@@ -1,6 +1,6 @@
 'use client';
 
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import type { ColumnDef } from '@tanstack/react-table';
 import { EditIcon, TrashIcon } from 'lucide-react';
 import Image from 'next/image';
@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 
 import DeleteAlertDialog from '@/components/delete-alert-dialog';
 import { Button } from '@/components/ui/button';
-import { deleteService, getAllServices } from '@/services/service.service';
+import { deleteService } from '@/services/service.service';
 import type { Service } from '@/types/service';
 
 export const serviceTableColumns: ColumnDef<Service>[] = [
@@ -38,10 +38,6 @@ export const serviceTableColumns: ColumnDef<Service>[] = [
     accessorKey: 'Actions',
     header: () => <div className="text-center">Actions</div>,
     cell: ({ row }) => {
-      const { data: services } = useQuery({
-        queryKey: ['services'],
-        queryFn: getAllServices,
-      });
       const { mutateAsync } = useMutation({
         mutationFn: () => deleteService(row.original.id),
         onSuccess: () => {

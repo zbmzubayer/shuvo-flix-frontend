@@ -12,6 +12,7 @@ export const createServiceAccount = async (data: ServiceAccountDto) => {
     body: JSON.stringify(data),
   });
 
+  revalidateTag("services");
   revalidateTag("service-accounts");
 
   return res;
@@ -33,14 +34,21 @@ export const getServiceAccountById = async (id: string) => {
   });
 };
 
-export const updateServiceAccount = async (
-  id: number,
-  data: ServiceAccountDto
-) => {
-  return await fetchApi<ServiceAccount>(`/service-account/${id}`, {
-    method: "PUT",
+export const updateServiceAccount = async ({
+  id,
+  data,
+}: {
+  id: number;
+  data: ServiceAccountDto;
+}) => {
+  const res = await fetchApi<ServiceAccount>(`/service-account/${id}`, {
+    method: "PATCH",
     body: JSON.stringify(data),
   });
+  revalidateTag("services");
+  revalidateTag("service-accounts");
+
+  return res;
 };
 
 export const deleteServiceAccount = async (id: number) => {
@@ -48,6 +56,7 @@ export const deleteServiceAccount = async (id: number) => {
     method: "DELETE",
   });
 
+  revalidateTag("services");
   revalidateTag("service-accounts");
 
   return res;

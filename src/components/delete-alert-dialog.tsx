@@ -33,7 +33,7 @@ export default function DeleteAlertDialog({ children, onConfirm }: DeleteAlertDi
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. All your data will be removed.
+              This action cannot be undone. The data will be removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
         </div>

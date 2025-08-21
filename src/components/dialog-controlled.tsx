@@ -12,7 +12,7 @@ type DialogContextValue = {
 const DialogContext = createContext<DialogContextValue | null>(null);
 
 type DialogControlledProps = React.ComponentProps<typeof Dialog> & {
-  trigger: React.ReactNode;
+  trigger?: React.ReactNode;
 };
 
 export function DialogControlled({ children, trigger, ...props }: DialogControlledProps) {
@@ -21,7 +21,9 @@ export function DialogControlled({ children, trigger, ...props }: DialogControll
   return (
     <DialogContext.Provider value={{ open, setOpen }}>
       <Dialog onOpenChange={setOpen} open={open} {...props}>
-        <DialogTrigger onClick={(prev) => setOpen(!prev)}>{trigger}</DialogTrigger>
+        <DialogTrigger asChild onClick={(prev) => setOpen(!prev)}>
+          {trigger}
+        </DialogTrigger>
         {children}
       </Dialog>
     </DialogContext.Provider>

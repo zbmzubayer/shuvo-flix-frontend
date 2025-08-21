@@ -33,14 +33,20 @@ export const getDealerById = async (id: string) => {
   });
 };
 
-export const updateDealer = async (
-  id: number,
-  data: DealerDto & { logo: string }
-) => {
-  return await fetchApi<Dealer>(`/dealer/${id}`, {
-    method: "PUT",
+export const updateDealer = async ({
+  id,
+  data,
+}: {
+  id: number;
+  data: DealerDto & { logo: string };
+}) => {
+  const res = await fetchApi<Dealer>(`/dealer/${id}`, {
+    method: "PATCH",
     body: JSON.stringify(data),
   });
+  revalidateTag("dealers");
+
+  return res;
 };
 
 export const deleteDealer = async (id: number) => {

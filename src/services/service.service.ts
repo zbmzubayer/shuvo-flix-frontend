@@ -33,14 +33,20 @@ export const getServiceById = async (id: string) => {
   });
 };
 
-export const updateService = async (
-  id: number,
-  data: ServiceDto & { logo: string }
-) => {
-  return await fetchApi<Service>(`/service/${id}`, {
-    method: "PUT",
+export const updateService = async ({
+  id,
+  data,
+}: {
+  id: number;
+  data: ServiceDto & { logo: string };
+}) => {
+  const res = await fetchApi<Service>(`/service/${id}`, {
+    method: "PATCH",
     body: JSON.stringify(data),
   });
+  revalidateTag("services");
+
+  return res;
 };
 
 export const deleteService = async (id: number) => {

@@ -5,6 +5,7 @@ import { useMutation, useQueries } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { useDialog } from '@/components/dialog-controlled';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -23,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { getAllDealers } from '@/services/dealer.service';
 import { getAllServices } from '@/services/service.service';
@@ -31,6 +33,7 @@ import { SERVICE_ACCOUNT_PAYMENT } from '@/types/service-account';
 import { type ServiceAccountDto, serviceAccountSchema } from '@/validations/service-account.dto';
 
 export function CreateServiceAccountForm() {
+  const { setOpen } = useDialog();
   const [{ data: services }, { data: dealers }] = useQueries({
     queries: [
       { queryKey: ['services'], queryFn: getAllServices },
@@ -60,8 +63,8 @@ export function CreateServiceAccountForm() {
   });
 
   const onSubmit = async (values: ServiceAccountDto) => {
-    console.log('Form submitted with values:', values);
-    // await mutateAsync(values);
+    setOpen(false);
+    await mutateAsync(values);
   };
 
   return (
@@ -75,11 +78,13 @@ export function CreateServiceAccountForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Name</FormLabel>
+                <FormMessage />
+              </div>
               <FormControl>
                 <Input placeholder="Enter the name" {...field} />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -88,11 +93,13 @@ export function CreateServiceAccountForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Email</FormLabel>
+                <FormMessage />
+              </div>
               <FormControl>
                 <Input placeholder="Enter the email" {...field} />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -101,11 +108,13 @@ export function CreateServiceAccountForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Password</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Password</FormLabel>
+                <FormMessage />
+              </div>
               <FormControl>
                 <Input placeholder="Enter the password" {...field} />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -115,8 +124,11 @@ export function CreateServiceAccountForm() {
           name="serviceId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 dark:text-gray-300">Service</FormLabel>
-              <Select onValueChange={field.onChange}>
+              <div className="flex items-center justify-between">
+                <FormLabel>Service</FormLabel>
+                <FormMessage />
+              </div>
+              <Select onValueChange={(value) => field.onChange(Number(value))}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a service" />
@@ -130,7 +142,6 @@ export function CreateServiceAccountForm() {
                   ))}
                 </SelectContent>
               </Select>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -139,8 +150,11 @@ export function CreateServiceAccountForm() {
           name="dealerId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 dark:text-gray-300">Dealer</FormLabel>
-              <Select onValueChange={field.onChange}>
+              <div className="flex items-center justify-between">
+                <FormLabel>Dealer</FormLabel>
+                <FormMessage />
+              </div>
+              <Select onValueChange={(value) => field.onChange(Number(value))}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a dealer" />
@@ -154,7 +168,6 @@ export function CreateServiceAccountForm() {
                   ))}
                 </SelectContent>
               </Select>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -163,7 +176,10 @@ export function CreateServiceAccountForm() {
           name="payment"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 dark:text-gray-300">Payment</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Payment</FormLabel>
+                <FormMessage />
+              </div>
               <Select onValueChange={field.onChange}>
                 <FormControl>
                   <SelectTrigger className="w-full">
@@ -178,7 +194,6 @@ export function CreateServiceAccountForm() {
                   ))}
                 </SelectContent>
               </Select>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -188,22 +203,22 @@ export function CreateServiceAccountForm() {
           name="personalSlots"
           render={({ field: { onChange, ...fieldProps } }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 dark:text-gray-300">Personal Slots</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Personal Slots</FormLabel>
+                <FormMessage />
+              </div>
               <FormControl>
                 <Input
-                  min={0}
                   onChange={(e) => {
-                    const value = Number.parseFloat(e.target.value);
-                    if (value) {
-                      onChange(value);
-                    } else onChange('');
+                    const value = e.target.value;
+                    if (value === '') onChange(undefined);
+                    else onChange(Number.parseInt(value, 10));
                   }}
                   placeholder="Enter personal slots"
                   type="number"
                   {...fieldProps}
                 />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -212,22 +227,22 @@ export function CreateServiceAccountForm() {
           name="sharedSlots"
           render={({ field: { onChange, ...fieldProps } }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 dark:text-gray-300">Shared Slots</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Shared Slots</FormLabel>
+                <FormMessage />
+              </div>
               <FormControl>
                 <Input
-                  min={0}
                   onChange={(e) => {
-                    const value = Number.parseFloat(e.target.value);
-                    if (value) {
-                      onChange(value);
-                    } else onChange('');
+                    const value = e.target.value;
+                    if (value === '') onChange(undefined);
+                    else onChange(Number.parseInt(value, 10));
                   }}
                   placeholder="Enter shared slots"
                   type="number"
                   {...fieldProps}
                 />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -237,11 +252,13 @@ export function CreateServiceAccountForm() {
           name="joinDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 dark:text-gray-300">Join Date</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Join Date</FormLabel>
+                <FormMessage />
+              </div>
               <FormControl>
                 <DatePicker onChange={field.onChange} value={field.value} />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -250,11 +267,13 @@ export function CreateServiceAccountForm() {
           name="expiryDate"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-gray-700 dark:text-gray-300">Expiry Date</FormLabel>
+              <div className="flex items-center justify-between">
+                <FormLabel>Expiry Date</FormLabel>
+                <FormMessage />
+              </div>
               <FormControl>
                 <DatePicker onChange={field.onChange} value={field.value} />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
@@ -264,17 +283,22 @@ export function CreateServiceAccountForm() {
             name="note"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700 dark:text-gray-300">Note</FormLabel>
+                <div className="flex items-center justify-between">
+                  <FormLabel>Note</FormLabel>
+                  <FormMessage />
+                </div>
                 <FormControl>
                   <Textarea {...field} className="resize-none" />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
         </div>
-        <div className="col-span-2 mt-4 flex justify-end">
-          <Button type="submit">Create</Button>
+        <div className="col-span-2 mt-2 flex justify-end">
+          <Button disabled={isPending} type="submit">
+            {isPending && <Spinner />}
+            Create
+          </Button>
         </div>
       </form>
     </Form>

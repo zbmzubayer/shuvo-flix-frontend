@@ -1,8 +1,7 @@
-import { ContactIcon, LayoutDashboard, NotebookPenIcon, Settings } from 'lucide-react';
+import { ContactIcon, LayoutDashboard, NotebookPenIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { ThemeToggle } from '@/components/theme-toggle';
 import {
   Sidebar,
   SidebarContent,
@@ -56,11 +55,11 @@ const items = [
     url: '/dealer',
     icon: ContactIcon,
   },
-  {
-    title: 'Settings',
-    url: '/settings',
-    icon: Settings,
-  },
+  // {
+  //   title: 'Settings',
+  //   url: '/settings',
+  //   icon: Settings,
+  // },
 ];
 
 export function AppSidebar() {
@@ -93,7 +92,6 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <ThemeToggle />
         <NavUser />
       </SidebarFooter>
       <SidebarRail />

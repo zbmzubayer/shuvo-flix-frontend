@@ -11,6 +11,7 @@ import {
   Trigger,
 } from '@radix-ui/react-dialog';
 import { XIcon } from 'lucide-react';
+import { createContext, useContext, useState } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -65,7 +66,7 @@ function DialogContent({
         {children}
         {showCloseButton && (
           <Close
-            className="absolute top-4 right-4 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
+            className="absolute top-5 right-5 rounded-xs opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-hidden focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0"
             data-slot="dialog-close"
           >
             <XIcon />
@@ -117,6 +118,38 @@ function DialogDescription({ className, ...props }: React.ComponentProps<typeof 
   );
 }
 
+interface DialogContextValue {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+}
+
+const DialogContext = createContext<DialogContextValue | null>(null);
+
+const useDialog = () => {
+  const context = useContext(DialogContext);
+  if (!context) {
+    throw new Error('useDialog must be used within a DialogProvider');
+  }
+  const { open, setOpen } = context;
+  return { open, setOpen };
+};
+
+function DialogProvider({ ...props }: React.ComponentProps<typeof Root>) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <DialogContext.Provider value={{ open, setOpen }}>
+      <Dialog onOpenChange={setOpen} open={open} {...props} />
+    </DialogContext.Provider>
+  );
+}
+
+function DialogProviderTrigger({ ...props }: React.ComponentProps<typeof Trigger>) {
+  const { setOpen } = useDialog();
+
+  return <Trigger data-slot="dialog-provider-trigger" onClick={() => setOpen(true)} {...props} />;
+}
+
 export {
   Dialog,
   DialogClose,
@@ -128,4 +161,7 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
+  useDialog,
+  DialogProvider,
+  DialogProviderTrigger,
 };
