@@ -2,8 +2,10 @@ import { PlusIcon } from 'lucide-react';
 
 import { CreateCustomerForm } from '@/components/customer/create-customer-form';
 import { customerTableColumns } from '@/components/customer/customer-table-columns';
+import { CustomerDataTableToolbar } from '@/components/customer/customer-table-toolbar';
 import { Button } from '@/components/ui/button';
-import { DataTable } from '@/components/ui/data-table';
+import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
+import { DataTable2 } from '@/components/ui/data-table/data-table2';
 import {
   DialogContent,
   DialogDescription,
@@ -41,8 +43,11 @@ export default async function CustomerPage() {
         </DialogContent>
       </DialogProvider>
 
-      <div className="mt-5">
-        <DataTable columns={customerTableColumns} data={customers} />
+      <div className="mt-5 space-y-2">
+        <DataTableProvider columns={customerTableColumns} data={customers}>
+          <CustomerDataTableToolbar />
+          <DataTable2 />
+        </DataTableProvider>
       </div>
     </div>
   );

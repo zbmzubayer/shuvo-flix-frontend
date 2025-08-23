@@ -3,7 +3,7 @@
 import { revalidateTag } from "next/cache";
 
 import { fetchApi } from "@/lib/api";
-import type { Customer } from "@/types/customer";
+import type { Customer, CustomerDetails } from "@/types/customer";
 import type { CustomerDto } from "@/validations/customer.dto";
 
 export const createCustomer = async (data: CustomerDto) => {
@@ -18,7 +18,7 @@ export const createCustomer = async (data: CustomerDto) => {
 };
 
 export const getAllCustomers = async () => {
-  return await fetchApi<Customer[]>("/customer", {
+  return await fetchApi<CustomerDetails[]>("/customer", {
     method: "GET",
     cache: "force-cache",
     next: { tags: ["customers"] },

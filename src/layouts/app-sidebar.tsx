@@ -1,4 +1,11 @@
-import { ContactIcon, LayoutDashboard, NotebookPenIcon } from 'lucide-react';
+import {
+  BriefcaseBusinessIcon,
+  ContactIcon,
+  HandshakeIcon,
+  LayoutDashboard,
+  NotebookPenIcon,
+  RadioIcon,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -43,17 +50,17 @@ const items = [
   {
     title: 'Service',
     url: '/service',
-    icon: ContactIcon,
+    icon: BriefcaseBusinessIcon,
   },
   {
     title: 'Provider',
     url: '/provider',
-    icon: ContactIcon,
+    icon: RadioIcon,
   },
   {
     title: 'Dealer',
     url: '/dealer',
-    icon: ContactIcon,
+    icon: HandshakeIcon,
   },
   // {
   //   title: 'Settings',

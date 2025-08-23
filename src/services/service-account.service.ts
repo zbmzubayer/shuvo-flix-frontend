@@ -3,7 +3,10 @@
 import { revalidateTag } from "next/cache";
 
 import { fetchApi } from "@/lib/api";
-import type { ServiceAccount } from "@/types/service-account";
+import type {
+  ServiceAccount,
+  ServiceAccountDetails,
+} from "@/types/service-account";
 import type { ServiceAccountDto } from "@/validations/service-account.dto";
 
 export const createServiceAccount = async (data: ServiceAccountDto) => {
@@ -26,8 +29,8 @@ export const getAllServiceAccounts = async () => {
   });
 };
 
-export const getServiceAccountById = async (id: string) => {
-  return await fetchApi<ServiceAccount>(`/service-account/${id}`, {
+export const getServiceAccountById = async (id: number) => {
+  return await fetchApi<ServiceAccountDetails>(`/service-account/${id}`, {
     method: "GET",
     cache: "no-store",
     next: { tags: [`service-account-${id}`] },

@@ -24,14 +24,17 @@ export function DataTableToolbar<TData>({ table, filterFields }: DataTableToolba
           value={(table.getColumn('phone')?.getFilterValue() as string) ?? ''}
         />
 
-        {filterFields?.map((field) => (
-          <DataTableFacetedFilter
-            column={table.getColumn(field.column)}
-            key={field.column}
-            options={field.options}
-            title={field.title}
-          />
-        ))}
+        {filterFields?.map(
+          (field) =>
+            table.getColumn(field.column) && (
+              <DataTableFacetedFilter
+                column={table.getColumn(field.column)}
+                key={field.column}
+                options={field.options}
+                title={field.title}
+              />
+            )
+        )}
         {isFiltered && (
           <Button
             className="h-8 px-2 lg:px-3"

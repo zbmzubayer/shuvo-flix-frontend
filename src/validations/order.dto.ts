@@ -10,6 +10,7 @@ export const orderSchema = z.object({
   status: z.enum(ORDER_STATUS, "Required"),
   startDate: z.date("Required"),
   endDate: z.date("Required"),
+  serviceId: z.int("Required"),
   serviceAccountId: z.int("Required"),
   providerId: z.int("Required"),
   note: z.string().max(500).optional(),

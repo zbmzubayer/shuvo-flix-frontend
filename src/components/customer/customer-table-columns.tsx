@@ -1,23 +1,20 @@
 'use client';
 
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef, FilterFn } from '@tanstack/react-table';
 import { formatDistanceToNowStrict } from 'date-fns';
+import { LinkIcon } from 'lucide-react';
 
-import type { Customer } from '@/types/customer';
+import { CustomerDropdown } from '@/components/customer/customer-dropdown';
+import type { CustomerDetails } from '@/types/customer';
 
-// export const customerFilterFields: FilterField[] = [
-//   {
-//     column: 'status',
-//     title: 'Status',
-//     options: [
-//       { label: 'Active', value: 'active' },
-//       { label: 'Inactive', value: 'inactive' },
-//       { label: 'Suspended', value: 'suspended' },
-//     ],
-//   },
-// ];
+const multiColumnFilterFn: FilterFn<CustomerDetails> = (row, _columnId, filterValue) => {
+  const searchableRowContent =
+    `${row.original.name}${row.original.personalEmail}${row.original.phone}`.toLowerCase();
+  const searchTerm = (filterValue ?? '').toLowerCase();
+  return searchableRowContent.includes(searchTerm);
+};
 
-export const customerTableColumns: ColumnDef<Customer>[] = [
+export const customerTableColumns: ColumnDef<CustomerDetails>[] = [
   {
     accessorKey: 'id',
     header: 'Customer ID',
@@ -33,6 +30,7 @@ export const customerTableColumns: ColumnDef<Customer>[] = [
   {
     accessorKey: 'phone',
     header: 'Phone',
+    filterFn: multiColumnFilterFn,
     enableSorting: false,
   },
   {
@@ -45,45 +43,65 @@ export const customerTableColumns: ColumnDef<Customer>[] = [
     header: 'Join Date',
     cell: ({ row }) => `${new Date(row.original.createdAt).toLocaleDateString()}`,
   },
+  {
+    accessorKey: 'social',
+    header: 'Social',
+    cell: ({ row }) => row.original.social || 'N/A',
+    enableSorting: false,
+  },
+  {
+    accessorKey: 'socialLink',
+    header: 'Social Link',
+    cell: ({ row }) =>
+      row.original.socialLink ? (
+        <a href={row.original.socialLink} rel="noopener noreferrer" target="_blank">
+          <LinkIcon className="inline size-4" />
+        </a>
+      ) : (
+        'N/A'
+      ),
+    enableSorting: false,
+  },
 
-  // {
-  //   accessorKey: 'Actions',
-  //   header: () => <div className="text-center">Actions</div>,
-  //   cell: ({ row }) => {
-  //     const { mutateAsync } = useMutation({
-  //       mutationFn: () => deleteCustomer(row.original.id),
-  //       onSuccess: () => {
-  //         toast.success('Customer deleted successfully');
-  //       },
-  //       onError: () => {
-  //         toast.error('Failed to delete customer');
-  //       },
-  //     });
+  {
+    accessorKey: 'actions',
+    header: () => <span className="sr-only">Actions</span>,
+    cell: ({ row }) => <CustomerDropdown customer={row.original} />,
+    enableSorting: false,
+    // cell: ({ row }) => {
+    //   const { mutateAsync } = useMutation({
+    //     mutationFn: () => deleteCustomer(row.original.id),
+    //     onSuccess: () => {
+    //       toast.success('Customer deleted successfully');
+    //     },
+    //     onError: () => {
+    //       toast.error('Failed to delete customer');
+    //     },
+    //   });
 
-  //     return (
-  //       <div className="flex justify-center gap-2">
-  //         <DialogProvider>
-  //           <DialogProviderTrigger asChild>
-  //             <Button className="size-8" variant="outline">
-  //               <EditIcon />
-  //             </Button>
-  //           </DialogProviderTrigger>
-  //           <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
-  //             <DialogHeader>
-  //               <DialogTitle>Edit Customer</DialogTitle>
-  //             </DialogHeader>
-  //             <EditCustomerForm customer={row.original} />
-  //           </DialogContent>
-  //         </DialogProvider>
+    //   return (
+    //     <div className="flex justify-center gap-2">
+    //       <DialogProvider>
+    //         <DialogProviderTrigger asChild>
+    //           <Button className="size-8" variant="outline">
+    //             <EditIcon />
+    //           </Button>
+    //         </DialogProviderTrigger>
+    //         <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
+    //           <DialogHeader>
+    //             <DialogTitle>Edit Customer</DialogTitle>
+    //           </DialogHeader>
+    //           <EditCustomerForm customer={row.original} />
+    //         </DialogContent>
+    //       </DialogProvider>
 
-  //         <DeleteAlertDialog onConfirm={async () => await mutateAsync()}>
-  //           <Button className="size-8" variant="destructive">
-  //             <TrashIcon />
-  //           </Button>
-  //         </DeleteAlertDialog>
-  //       </div>
-  //     );
-  //   },
-  //   enableSorting: false,
-  // },
+    //       <DeleteAlertDialog onConfirm={async () => await mutateAsync()}>
+    //         <Button className="size-8" variant="destructive">
+    //           <TrashIcon />
+    //         </Button>
+    //       </DeleteAlertDialog>
+    //     </div>
+    //   );
+    // },
+  },
 ];

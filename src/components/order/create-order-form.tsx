@@ -34,15 +34,9 @@ import { CUSTOMER_SOCIAL } from '@/types/customer';
 import { ORDER_ACCOUNT_TYPE, ORDER_STATUS } from '@/types/order';
 import { type OrderFormDto, orderFormSchema } from '@/validations/order.dto';
 
-// export const createOrder2 = async (data: OrderDto) => {
-//   const res = await axiosInstance.post<Order>('/order', data);
-
-//   return res;
-// };
-
 export function CreateOrderForm() {
   const { setOpen } = useDialog();
-  const [selectedService, setSelectedService] = useState<number>(0);
+  const [selectedServiceIndex, setSelectedServiceIndex] = useState<number>(0);
   const [{ data: services }, { data: providers }] = useQueries({
     queries: [
       { queryKey: ['services'], queryFn: getAllServices },
@@ -64,8 +58,14 @@ export function CreateOrderForm() {
   });
 
   useEffect(() => {
+    if (services) {
+      form.setValue('serviceId', services?.[selectedServiceIndex]?.id);
+    }
+  }, [services]);
+
+  useEffect(() => {
     form.resetField('serviceAccountId');
-  }, [selectedService]);
+  }, [selectedServiceIndex]);
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createOrder,
@@ -163,8 +163,14 @@ export function CreateOrderForm() {
                 </div>
                 <div className="flex items-center">
                   <Select
-                    onValueChange={(value) => setSelectedService(Number(value))}
-                    value={selectedService.toString()}
+                    onValueChange={(value) => {
+                      const index = Number(value);
+                      setSelectedServiceIndex(index);
+                      if (services) {
+                        form.setValue('serviceId', services[index]?.id);
+                      }
+                    }}
+                    value={selectedServiceIndex.toString()}
                   >
                     <SelectTrigger className="w-2/5 rounded-r-none">
                       <SelectValue placeholder="Service" />
@@ -187,8 +193,9 @@ export function CreateOrderForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {services?.length && services[selectedService]?.serviceAccounts?.length ? (
-                        services[selectedService]?.serviceAccounts?.map((item) => (
+                      {services?.length &&
+                      services[selectedServiceIndex]?.serviceAccounts?.length ? (
+                        services[selectedServiceIndex]?.serviceAccounts?.map((item) => (
                           <SelectItem key={item.id} value={item.id.toString()}>
                             {item.name}
                           </SelectItem>

@@ -1,24 +1,18 @@
 'use client';
 
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef, FilterFn } from '@tanstack/react-table';
 import { formatDistanceToNowStrict } from 'date-fns';
 
 import { Badge } from '@/components/ui/badge';
-import type { FilterField } from '@/components/ui/data-table';
 import { cn } from '@/lib/utils';
 import { ORDER_STATUS, type OrderDetails } from '@/types/order';
 
-export const orderFilterFields: FilterField[] = [
-  {
-    column: 'status',
-    title: 'Status',
-    options: [
-      { label: ORDER_STATUS.paid, value: ORDER_STATUS.paid },
-      { label: ORDER_STATUS.due, value: ORDER_STATUS.due },
-      { label: ORDER_STATUS.unpaid, value: ORDER_STATUS.unpaid },
-    ],
-  },
-];
+const multiColumnFilterFn: FilterFn<OrderDetails> = (row, _columnId, filterValue) => {
+  const searchableRowContent =
+    `${row.original.customer.name}${row.original.customer.phone}${row.original.email}`.toLowerCase();
+  const searchTerm = (filterValue ?? '').toLowerCase();
+  return searchableRowContent.includes(searchTerm);
+};
 
 export const orderTableColumns: ColumnDef<OrderDetails>[] = [
   {
@@ -44,7 +38,7 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
     accessorKey: 'phone',
     header: 'Phone',
     cell: ({ row }) => `${row.original.customer.phone}`,
-    filterFn: (row, _id, value) => row.original.customer.phone.includes(value),
+    filterFn: multiColumnFilterFn,
     enableSorting: false,
   },
   {
@@ -71,6 +65,7 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
   {
     accessorKey: 'serviceAccount.name',
     header: 'Service Account',
+    cell: ({ row }) => `${row.original.serviceAccount.name} (${row.original.accountType})`,
   },
   {
     accessorKey: 'status',

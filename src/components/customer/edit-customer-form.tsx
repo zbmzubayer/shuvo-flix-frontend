@@ -6,7 +6,6 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
-import { useDialog } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -16,38 +15,50 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
-import { createCustomer } from '@/services/customer.service';
+import { updateCustomer } from '@/services/customer.service';
+import { CUSTOMER_SOCIAL, type Customer } from '@/types/customer';
 import { type CustomerDto, customerSchema } from '@/validations/customer.dto';
 
-export function CreateCustomerForm({customer}: {}) {
-  const { setOpen } = useDialog();
+interface EditCustomerFormProps {
+  customer: Customer;
+  setOpen: (open: boolean) => void;
+}
 
+export function EditCustomerForm({ customer, setOpen }: EditCustomerFormProps) {
   const form = useForm<CustomerDto>({
     resolver: zodResolver(customerSchema),
     defaultValues: {
-      name: '',
-      personalEmail: '',
-      phone: '',
-      social: '',
+      name: customer.name,
+      personalEmail: customer.personalEmail,
+      phone: customer.phone,
+      social: customer.social ?? undefined,
+      socialLink: customer.socialLink,
     },
   });
 
   const { mutateAsync, isPending, error } = useMutation({
-    mutationFn: createCustomer,
+    mutationFn: updateCustomer,
     onSuccess: () => {
       setOpen(false);
-      toast.success('Customer created successfully');
+      toast.success('Customer updated successfully');
     },
     onError: () => {
-      toast.error('Failed to create customer', {
+      toast.error('Failed to update customer', {
         description: error?.message,
       });
     },
   });
 
   const onSubmit = async (values: CustomerDto) => {
-    await mutateAsync(values);
+    await mutateAsync({ id: customer.id, data: values });
   };
 
   return (
@@ -102,21 +113,37 @@ export function CreateCustomerForm({customer}: {}) {
           control={form.control}
           name="social"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-2">
               <div className="flex items-center justify-between">
                 <FormLabel>Social</FormLabel>
                 <FormMessage />
               </div>
-              <FormControl>
-                <Input placeholder="Enter social link" type="url" {...field} />
-              </FormControl>
+              <div className="flex items-center">
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="w-2/5 rounded-r-none">
+                    <SelectValue placeholder="Social" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(CUSTOMER_SOCIAL)?.map((item) => (
+                      <SelectItem key={item} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  className="rounded-l-none focus-visible:ring-0"
+                  placeholder="Enter social link"
+                  {...form.register('socialLink')}
+                />
+              </div>
             </FormItem>
           )}
         />
         <div className="mt-4 flex justify-end">
           <Button disabled={isPending} type="submit">
             {isPending && <Spinner />}
-            Create Customer
+            Save
           </Button>
         </div>
       </form>

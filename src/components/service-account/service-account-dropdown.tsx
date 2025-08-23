@@ -1,10 +1,20 @@
 'use client';
 
-import { CircleXIcon, EditIcon, EllipsisVerticalIcon, EyeIcon } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import {
+  CircleCheckIcon,
+  CircleXIcon,
+  EditIcon,
+  EllipsisVerticalIcon,
+  EyeIcon,
+} from 'lucide-react';
 import { useState } from 'react';
 
 import { EditServiceAccountForm } from '@/components/service-account/edit-service-account-form';
+import { serviceAccountOrderColumns } from '@/components/service-account/service-account-order-columns';
 import { Button } from '@/components/ui/button';
+import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
+import { DataTable2 } from '@/components/ui/data-table/data-table2';
 import {
   Dialog,
   DialogContent,
@@ -18,35 +28,44 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { ServiceAccount } from '@/types/service-account';
+import { Spinner } from '@/components/ui/spinner';
+import { getServiceAccountById } from '@/services/service-account.service';
+import { SERVICE_ACCOUNT_STATUS, type ServiceAccount } from '@/types/service-account';
 
 export function ServiceAccountDropdown({ account }: { account: ServiceAccount }) {
   const [open, setOpen] = useState(false);
+  const [viewOpen, setViewOpen] = useState(false);
 
   return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button className="size-7" variant="ghost">
-            <EllipsisVerticalIcon className="size-3.5" />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <EditIcon />
-            Edit
-          </DropdownMenuItem>
-
-          <DropdownMenuItem>
-            <EyeIcon />
-            View
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <CircleXIcon className="text-destructive" />
-            Disable
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button className="size-7" variant="ghost">
+          <EllipsisVerticalIcon className="size-3.5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onClick={() => setOpen(true)}>
+          <EditIcon />
+          Edit
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setViewOpen(true)}>
+          <EyeIcon />
+          View
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          {account.status === SERVICE_ACCOUNT_STATUS.disabled ? (
+            <>
+              <CircleCheckIcon className="text-green-500" />
+              Activate
+            </>
+          ) : (
+            <>
+              <CircleXIcon className="text-destructive" />
+              Disable
+            </>
+          )}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
       <Dialog onOpenChange={setOpen} open={open}>
         <DialogContent
           className="flex flex-col gap-0 p-0 sm:max-w-xl"
@@ -61,6 +80,36 @@ export function ServiceAccountDropdown({ account }: { account: ServiceAccount })
           </div>
         </DialogContent>
       </Dialog>
-    </>
+      <Dialog onOpenChange={setViewOpen} open={viewOpen}>
+        <DialogContent
+          className="flex flex-col gap-0 p-0 sm:max-w-5xl"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          <div className="overflow-y-auto p-6">
+            <DialogHeader className="mb-5 items-center">
+              <DialogTitle>{account.name} - Orders</DialogTitle>
+            </DialogHeader>
+            <ServiceAccountOrdersTable accountId={account.id} />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </DropdownMenu>
+  );
+}
+
+function ServiceAccountOrdersTable({ accountId }: { accountId: number }) {
+  const { data, isFetching } = useQuery({
+    queryKey: ['service-account', accountId],
+    queryFn: () => getServiceAccountById(accountId),
+  });
+
+  return isFetching ? (
+    <div className="flex justify-center">
+      <Spinner />
+    </div>
+  ) : (
+    <DataTableProvider columns={serviceAccountOrderColumns} data={data?.orders || []}>
+      <DataTable2 />
+    </DataTableProvider>
   );
 }

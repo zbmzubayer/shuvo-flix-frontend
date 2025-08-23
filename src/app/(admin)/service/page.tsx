@@ -13,13 +13,15 @@ import {
 } from '@/components/ui/dialog';
 import { AppHeader } from '@/layouts/app-header';
 import { getAllServices } from '@/services/service.service';
-import type { ServiceAccount } from '@/types/service-account';
+import { SERVICE_ACCOUNT_STATUS, type ServiceAccount } from '@/types/service-account';
 
 export default async function ServicePage() {
   const services = await getAllServices();
 
   const totalActiveAccounts = services.reduce((acc, service) => {
-    const active = service.serviceAccounts.find((account) => account.isActive);
+    const active = service.serviceAccounts.find(
+      (account) => account.status !== SERVICE_ACCOUNT_STATUS.disabled
+    );
     if (active) {
       acc.push(active);
     }
@@ -28,9 +30,7 @@ export default async function ServicePage() {
 
   const expiredSoonAccounts = services.reduce((acc, service) => {
     const soonExpired = service.serviceAccounts.find(
-      (account) =>
-        account.isActive &&
-        new Date(account.expiryDate) < new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // within two days
+      (account) => new Date(account.expiryDate) < new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // within two days
     );
     if (soonExpired) {
       acc.push(soonExpired);
@@ -39,7 +39,9 @@ export default async function ServicePage() {
   }, [] as ServiceAccount[]);
 
   const expiredAccounts = services.reduce((acc, service) => {
-    const expired = service.serviceAccounts.find((account) => !account.isActive);
+    const expired = service.serviceAccounts.find(
+      (account) => new Date(account.expiryDate) < new Date()
+    );
     if (expired) {
       acc.push(expired);
     }

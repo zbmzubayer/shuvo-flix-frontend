@@ -14,6 +14,7 @@ export const createOrder = async (data: OrderDto) => {
 
   revalidateTag("orders");
   revalidateTag("services");
+  revalidateTag("customers");
 
   return res;
 };

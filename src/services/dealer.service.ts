@@ -20,7 +20,7 @@ export const createDealer = async (data: DealerDto & { logo: string }) => {
 export const getAllDealers = async () => {
   return await fetchApi<Dealer[]>("/dealer", {
     method: "GET",
-    cache: "no-store",
+    // cache: "no-store",
     next: { tags: ["dealers"] },
   });
 };

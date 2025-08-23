@@ -7,18 +7,26 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getFilteredRowModel,
+  getPaginationRowModel,
   getSortedRowModel,
   type SortingState,
   useReactTable,
 } from '@tanstack/react-table';
 import { createContext, useContext, useState } from 'react';
 
-interface DataTableContextProps<TData> {
+export interface FilterField {
+  column: string;
+  title: string;
+  options: { label: React.ReactNode; value: string }[];
+}
+
+interface DataTableContextValues<TData> {
   table: ReturnType<typeof useReactTable<TData>>;
+  columnLength: number;
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-export const DataTableContext = createContext<DataTableContextProps<any> | undefined>(undefined);
+export const DataTableContext = createContext<DataTableContextValues<any> | null>(null);
 
 interface DataTableProviderProps<TData, TValue> {
   children: React.ReactNode;
@@ -34,6 +42,13 @@ export function DataTableProvider<TData, TValue>({
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 
+  // const [isMounted, setIsMounted] = useState(false);
+
+  // // Fix error on react table, when the table is not mounted
+  // useLayoutEffect(() => {
+  //   setIsMounted(true);
+  // }, []);
+
   const table = useReactTable({
     data,
     columns,
@@ -47,11 +62,18 @@ export function DataTableProvider<TData, TValue>({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
   });
 
-  return <DataTableContext.Provider value={{ table }}>{children}</DataTableContext.Provider>;
+  // if (!isMounted) return null;
+
+  return (
+    <DataTableContext.Provider value={{ table, columnLength: columns.length }}>
+      {children}
+    </DataTableContext.Provider>
+  );
 }
 
 export const useDataTable = () => {

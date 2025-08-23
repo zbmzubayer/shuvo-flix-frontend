@@ -1,14 +1,24 @@
 'use client';
 
-import type { ColumnDef } from '@tanstack/react-table';
+import type { ColumnDef, FilterFn } from '@tanstack/react-table';
+import { formatDistanceToNowStrict } from 'date-fns';
 
 import { ServiceAccountDropdown } from '@/components/service-account/service-account-dropdown';
-import type { ServiceAccount } from '@/types/service-account';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { SERVICE_ACCOUNT_STATUS, type ServiceAccount } from '@/types/service-account';
+
+const multiColumnFilterFn: FilterFn<ServiceAccount> = (row, _columnId, filterValue) => {
+  const searchableRowContent = `${row.original.name}${row.original.email}`.toLowerCase();
+  const searchTerm = (filterValue ?? '').toLowerCase();
+  return searchableRowContent.includes(searchTerm);
+};
 
 export const serviceAccountTableColumns: ColumnDef<ServiceAccount>[] = [
   {
     accessorKey: 'name',
     header: 'Name',
+    filterFn: multiColumnFilterFn,
   },
   {
     accessorKey: 'email',
@@ -26,11 +36,6 @@ export const serviceAccountTableColumns: ColumnDef<ServiceAccount>[] = [
     cell: ({ row }) => `${row.original.soldSharedSlots || 0}/${row.original.sharedSlots || 0}`,
   },
   {
-    accessorKey: 'isActive',
-    header: 'Status',
-    cell: ({ row }) => (row.original.isActive ? 'Active' : 'Inactive'),
-  },
-  {
     accessorKey: 'joinDate',
     header: 'Join Date',
     cell: ({ row }) => new Date(row.original.joinDate).toLocaleDateString(),
@@ -41,9 +46,27 @@ export const serviceAccountTableColumns: ColumnDef<ServiceAccount>[] = [
     cell: ({ row }) => new Date(row.original.expiryDate).toLocaleDateString(),
   },
   {
-    accessorKey: 'createdAt',
-    header: 'Created Date',
-    cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+    accessorKey: 'leftDays',
+    header: 'Left Days',
+    cell: ({ row }) => `${formatDistanceToNowStrict(new Date(row.original.expiryDate))}`,
+    accessorFn: (row) => row.expiryDate,
+  },
+  {
+    accessorKey: 'status',
+    header: 'Status',
+    cell: ({ row }) => (
+      <Badge
+        className={cn('text-white', {
+          'bg-green-500': row.original.status === SERVICE_ACCOUNT_STATUS.new,
+          'bg-sky-500': row.original.status === SERVICE_ACCOUNT_STATUS.partial,
+          'bg-orange-500': row.original.status === SERVICE_ACCOUNT_STATUS.full,
+          'bg-red-500': row.original.status === SERVICE_ACCOUNT_STATUS.disabled,
+        })}
+      >
+        {row.original.status}
+      </Badge>
+    ),
+    enableSorting: false,
   },
   {
     accessorKey: 'actions',

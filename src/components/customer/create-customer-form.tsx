@@ -16,8 +16,16 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { createCustomer } from '@/services/customer.service';
+import { CUSTOMER_SOCIAL } from '@/types/customer';
 import { type CustomerDto, customerSchema } from '@/validations/customer.dto';
 
 export function CreateCustomerForm() {
@@ -29,7 +37,6 @@ export function CreateCustomerForm() {
       name: '',
       personalEmail: '',
       phone: '',
-      social: '',
     },
   });
 
@@ -102,14 +109,30 @@ export function CreateCustomerForm() {
           control={form.control}
           name="social"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-2">
               <div className="flex items-center justify-between">
                 <FormLabel>Social</FormLabel>
                 <FormMessage />
               </div>
-              <FormControl>
-                <Input placeholder="Enter social link" type="url" {...field} />
-              </FormControl>
+              <div className="flex items-center">
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <SelectTrigger className="w-2/5 rounded-r-none">
+                    <SelectValue placeholder="Social" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.values(CUSTOMER_SOCIAL)?.map((item) => (
+                      <SelectItem key={item} value={item}>
+                        {item}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Input
+                  className="rounded-l-none focus-visible:ring-0"
+                  placeholder="Enter social link"
+                  {...form.register('socialLink')}
+                />
+              </div>
             </FormItem>
           )}
         />

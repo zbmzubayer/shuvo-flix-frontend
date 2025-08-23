@@ -1,9 +1,11 @@
 import { DialogControlled } from '@/components/dialog-controlled';
 import { CreateServiceAccountForm } from '@/components/service-account/create-service-account-form';
 import { serviceAccountTableColumns } from '@/components/service-account/service-account-table-columns';
+import { ServiceAccountDataTableToolbar } from '@/components/service-account/service-account-table-toolbar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { DataTable } from '@/components/ui/data-table';
+import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
+import { DataTable2 } from '@/components/ui/data-table/data-table2';
 import {
   DialogContent,
   DialogDescription,
@@ -12,7 +14,7 @@ import {
 } from '@/components/ui/dialog';
 import { AppHeader } from '@/layouts/app-header';
 import { getServiceById } from '@/services/service.service';
-import type { ServiceAccount } from '@/types/service-account';
+import { SERVICE_ACCOUNT_STATUS, type ServiceAccount } from '@/types/service-account';
 
 const calculateAccountStats = (accounts: ServiceAccount[]) => {
   let totalActiveAccounts = 0;
@@ -23,7 +25,7 @@ const calculateAccountStats = (accounts: ServiceAccount[]) => {
   let expiredAccounts = 0;
 
   accounts.forEach((account) => {
-    if (account.isActive) totalActiveAccounts++;
+    if (account.status !== SERVICE_ACCOUNT_STATUS.disabled) totalActiveAccounts++;
     if (account.expiryDate < new Date()) expiredAccounts++;
     totalSoldPersonalSlots += account.soldPersonalSlots;
     totalSoldSharedSlots += account.soldSharedSlots;
@@ -133,8 +135,12 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
           <p>No accounts found</p>
         )}
       </div> */}
-
-      <DataTable columns={serviceAccountTableColumns} data={accounts} />
+      <div className="mt-5 space-y-2">
+        <DataTableProvider columns={serviceAccountTableColumns} data={accounts}>
+          <ServiceAccountDataTableToolbar />
+          <DataTable2 />
+        </DataTableProvider>
+      </div>
     </div>
   );
 }

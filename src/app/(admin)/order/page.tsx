@@ -1,9 +1,12 @@
 import { PlusIcon } from 'lucide-react';
 
 import { CreateOrderForm } from '@/components/order/create-order-form';
-import { orderFilterFields, orderTableColumns } from '@/components/order/order-table-columns';
+import { orderTableColumns } from '@/components/order/order-table-columns';
+import { OrderDataTableToolbar } from '@/components/order/order-table-toolbar';
 import { Button } from '@/components/ui/button';
-import { DataTable } from '@/components/ui/data-table';
+import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination';
+import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
+import { DataTable2 } from '@/components/ui/data-table/data-table2';
 import {
   DialogContent,
   DialogDescription,
@@ -21,28 +24,35 @@ export default async function OrderPage() {
   return (
     <div>
       <AppHeader title="Orders" />
-      <DialogProvider>
-        <DialogProviderTrigger asChild>
-          <Button>
-            <PlusIcon />
-            Create Order
-          </Button>
-        </DialogProviderTrigger>
-        <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-xl">
-          <div className="overflow-y-auto p-6">
-            <DialogHeader className="mb-2">
-              <DialogTitle>Create Order</DialogTitle>
-              <DialogDescription>
-                Fill in the details below to create a new order.
-              </DialogDescription>
-            </DialogHeader>
-            <CreateOrderForm />
-          </div>
-        </DialogContent>
-      </DialogProvider>
 
-      <div className="mt-5">
-        <DataTable columns={orderTableColumns} data={orders} filterFields={orderFilterFields} />
+      <div className="mt-5 space-y-2">
+        <DataTableProvider columns={orderTableColumns} data={orders}>
+          <div className="flex justify-between">
+            <OrderDataTableToolbar />
+            <DialogProvider>
+              <DialogProviderTrigger asChild>
+                <Button size="sm">
+                  <PlusIcon />
+                  Create Order
+                </Button>
+              </DialogProviderTrigger>
+              <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-xl">
+                <div className="overflow-y-auto p-6">
+                  <DialogHeader className="mb-2">
+                    <DialogTitle>Create Order</DialogTitle>
+                    <DialogDescription>
+                      Fill in the details below to create a new order.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <CreateOrderForm />
+                </div>
+              </DialogContent>
+            </DialogProvider>
+          </div>
+          <DataTable2 />
+          <DataTablePagination />
+        </DataTableProvider>
+
         {/* <OrderTable orders={orders} /> */}
       </div>
     </div>

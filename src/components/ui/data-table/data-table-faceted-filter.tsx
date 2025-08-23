@@ -18,7 +18,7 @@ import { cn } from '@/lib/utils';
 
 interface DataTableFacetedFilterProps<TData, TValue> {
   column?: Column<TData, TValue>;
-  title?: string;
+  title: string;
   options: {
     label: React.ReactNode;
     value: string;
@@ -102,11 +102,9 @@ export function DataTableFacetedFilter<TData, TValue>({
                     </div>
                     {option.icon && <option.icon className="mr-2 size-4 text-muted-foreground" />}
                     <span>{option.label}</span>
-                    {facets?.get(option.value) && (
-                      <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">
-                        {facets.get(option.value)}
-                      </span>
-                    )}
+                    <span className="ml-auto flex size-4 items-center justify-center font-mono text-xs">
+                      {facets?.get(option.value) ?? 0}
+                    </span>
                   </CommandItem>
                 );
               })}

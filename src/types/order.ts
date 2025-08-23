@@ -1,5 +1,6 @@
 import type { Customer } from "@/types/customer";
 import type { Provider } from "@/types/provider";
+import type { Service } from "@/types/service";
 import type { ServiceAccount } from "@/types/service-account";
 
 export type Order = {
@@ -11,6 +12,7 @@ export type Order = {
   endDate: Date;
   createdAt: Date;
   updatedAt: Date;
+  serviceId: number;
   serviceAccountId: number;
   providerId: number;
   customerId: number;
@@ -18,8 +20,9 @@ export type Order = {
 
 export type OrderDetails = Omit<
   Order,
-  "serviceAccountId" | "providerId" | "customerId"
+  "serviceId" | "serviceAccountId" | "providerId" | "customerId"
 > & {
+  service: Service;
   serviceAccount: ServiceAccount;
   provider: Provider;
   customer: Customer;

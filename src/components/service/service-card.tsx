@@ -5,8 +5,6 @@ import { Card } from '@/components/ui/card';
 import type { ServiceWithServiceAccount } from '@/types/service';
 
 export function ServiceCard({ service }: { service: ServiceWithServiceAccount }) {
-  const totalActiveAccounts = service.serviceAccounts.filter((account) => account.isActive).length;
-
   return (
     <Link href={`/service/${service.id}`}>
       <Card className="p-5">
@@ -22,7 +20,9 @@ export function ServiceCard({ service }: { service: ServiceWithServiceAccount })
           </div>
           <div className="flex flex-1 flex-col justify-between">
             <h3 className="font-bold text-xl">{service.name}</h3>
-            <div className="self-end font-medium text-2xl tabular-nums">{totalActiveAccounts}</div>
+            <div className="self-end font-medium text-2xl tabular-nums">
+              {service.serviceAccounts.length}
+            </div>
           </div>
         </div>
       </Card>
