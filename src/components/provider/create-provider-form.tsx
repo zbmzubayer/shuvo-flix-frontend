@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { invalidateCache } from '@/actions/cache.action';
 import { FileUpload } from '@/components/file-upload';
 import { Button } from '@/components/ui/button';
 import { useDialog } from '@/components/ui/dialog';
@@ -20,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { useFileUpload } from '@/hooks/use-file-upload';
 import { uploadFile } from '@/services/file.service';
-import { createProvider } from '@/services/provider.service';
+import { createProvider, PROVIDER_CACHE_KEY } from '@/services/provider.service';
 import { type ProviderDto, providerSchema } from '@/validations/provider.dto';
 
 export function CreateProviderForm() {
@@ -35,13 +36,14 @@ export function CreateProviderForm() {
     defaultValues: { name: '' },
   });
 
-  const { mutateAsync, error } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: createProvider,
     onSuccess: () => {
+      invalidateCache(PROVIDER_CACHE_KEY);
       toast.success('Provider created successfully');
       setOpen(false);
     },
-    onError: () => {
+    onError: (error) => {
       toast.error('Failed to create provider', {
         description: error?.message,
       });

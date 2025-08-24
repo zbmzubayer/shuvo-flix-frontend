@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { invalidateCache } from '@/actions/cache.action';
 import { Button } from '@/components/ui/button';
 import { useDialog } from '@/components/ui/dialog';
 import {
@@ -24,7 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
-import { createCustomer } from '@/services/customer.service';
+import { CUSTOMER_CACHE_KEY, createCustomer } from '@/services/customer.service';
 import { CUSTOMER_SOCIAL } from '@/types/customer';
 import { type CustomerDto, customerSchema } from '@/validations/customer.dto';
 
@@ -40,13 +41,14 @@ export function CreateCustomerForm() {
     },
   });
 
-  const { mutateAsync, isPending, error } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: createCustomer,
     onSuccess: () => {
+      invalidateCache(CUSTOMER_CACHE_KEY);
       setOpen(false);
       toast.success('Customer created successfully');
     },
-    onError: () => {
+    onError: (error) => {
       toast.error('Failed to create customer', {
         description: error?.message,
       });

@@ -7,9 +7,18 @@ import type { FilterField } from '@/components/ui/data-table/data-table';
 import { DataTableFacetedFilter } from '@/components/ui/data-table/data-table-faceted-filter';
 import { useDataTable } from '@/components/ui/data-table/data-table-provider';
 import { Input } from '@/components/ui/input';
-import { SERVICE_ACCOUNT_STATUS } from '@/types/service-account';
+import { SERVICE_ACCOUNT_PAYMENT, SERVICE_ACCOUNT_STATUS } from '@/types/service-account';
 
 const filterFields: FilterField[] = [
+  {
+    column: 'payment',
+    title: 'Payment',
+    options: [
+      { label: SERVICE_ACCOUNT_PAYMENT.paid, value: SERVICE_ACCOUNT_PAYMENT.paid },
+      { label: SERVICE_ACCOUNT_PAYMENT.due, value: SERVICE_ACCOUNT_PAYMENT.due },
+      { label: SERVICE_ACCOUNT_PAYMENT.unpaid, value: SERVICE_ACCOUNT_PAYMENT.unpaid },
+    ],
+  },
   {
     column: 'status',
     title: 'Status',

@@ -27,7 +27,7 @@ export default async function OrderPage() {
 
       <div className="mt-5 space-y-2">
         <DataTableProvider columns={orderTableColumns} data={orders}>
-          <div className="flex justify-between">
+          <div className="flex items-center justify-between">
             <OrderDataTableToolbar />
             <DialogProvider>
               <DialogProviderTrigger asChild>

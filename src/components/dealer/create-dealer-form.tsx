@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { invalidateCache } from '@/actions/cache.action';
 import { FileUpload } from '@/components/file-upload';
 import { Button } from '@/components/ui/button';
 import { useDialog } from '@/components/ui/dialog';
@@ -19,7 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { useFileUpload } from '@/hooks/use-file-upload';
-import { createDealer } from '@/services/dealer.service';
+import { createDealer, DEALER_CACHE_KEY } from '@/services/dealer.service';
 import { uploadFile } from '@/services/file.service';
 import { type DealerDto, dealerSchema } from '@/validations/dealer.dto';
 
@@ -35,13 +36,14 @@ export function CreateDealerForm() {
     defaultValues: { name: '' },
   });
 
-  const { mutateAsync, error } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: createDealer,
     onSuccess: () => {
+      invalidateCache(DEALER_CACHE_KEY);
       toast.success('Dealer created successfully');
       setOpen(false);
     },
-    onError: () => {
+    onError: (error) => {
       toast.error('Failed to create dealer', {
         description: error?.message,
       });

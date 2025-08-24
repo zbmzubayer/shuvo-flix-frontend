@@ -1,4 +1,5 @@
-import { DialogControlled } from '@/components/dialog-controlled';
+import { PlusIcon } from 'lucide-react';
+
 import { CreateServiceAccountForm } from '@/components/service-account/create-service-account-form';
 import { serviceAccountTableColumns } from '@/components/service-account/service-account-table-columns';
 import { ServiceAccountDataTableToolbar } from '@/components/service-account/service-account-table-toolbar';
@@ -10,6 +11,8 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogProvider,
+  DialogProviderTrigger,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { AppHeader } from '@/layouts/app-header';
@@ -61,17 +64,6 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
   return (
     <div>
       <AppHeader title={`Accounts - ${service.name}`} />
-      <DialogControlled trigger={<Button>Create account</Button>}>
-        <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-xl">
-          <div className="overflow-y-auto p-6">
-            <DialogHeader className="mb-2">
-              <DialogTitle>Create Account</DialogTitle>
-              <DialogDescription>Please enter the details for the new account.</DialogDescription>
-            </DialogHeader>
-            <CreateServiceAccountForm />
-          </div>
-        </DialogContent>
-      </DialogControlled>
 
       <div className="mt-5 grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-4 dark:*:data-[slot=card]:bg-card">
         <Card className="gap-2 p-0 pb-2">
@@ -137,7 +129,28 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
       </div> */}
       <div className="mt-5 space-y-2">
         <DataTableProvider columns={serviceAccountTableColumns} data={accounts}>
-          <ServiceAccountDataTableToolbar />
+          <div className="flex items-center justify-between">
+            <ServiceAccountDataTableToolbar />
+            <DialogProvider>
+              <DialogProviderTrigger asChild>
+                <Button size="sm">
+                  <PlusIcon />
+                  Create account
+                </Button>
+              </DialogProviderTrigger>
+              <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-xl">
+                <div className="overflow-y-auto p-6">
+                  <DialogHeader className="mb-2">
+                    <DialogTitle>Create Account</DialogTitle>
+                    <DialogDescription>
+                      Please enter the details for the new account.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <CreateServiceAccountForm />
+                </div>
+              </DialogContent>
+            </DialogProvider>
+          </div>
           <DataTable2 />
         </DataTableProvider>
       </div>

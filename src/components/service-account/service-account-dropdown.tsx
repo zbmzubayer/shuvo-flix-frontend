@@ -9,7 +9,9 @@ import {
   EyeIcon,
 } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
+import { invalidateCache } from '@/actions/cache.action';
 import { EditServiceAccountForm } from '@/components/service-account/edit-service-account-form';
 import { serviceAccountOrderColumns } from '@/components/service-account/service-account-order-columns';
 import { Button } from '@/components/ui/button';
@@ -29,7 +31,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Spinner } from '@/components/ui/spinner';
-import { getServiceAccountById } from '@/services/service-account.service';
+import {
+  getServiceAccountById,
+  SERVICE_ACCOUNT_CACHE_KEY,
+  toggleServiceAccountStatus,
+} from '@/services/service-account.service';
 import { SERVICE_ACCOUNT_STATUS, type ServiceAccount } from '@/types/service-account';
 
 export function ServiceAccountDropdown({ account }: { account: ServiceAccount }) {
@@ -52,7 +58,20 @@ export function ServiceAccountDropdown({ account }: { account: ServiceAccount })
           <EyeIcon />
           View
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={async () => {
+            try {
+              await toggleServiceAccountStatus(account.id);
+              invalidateCache(SERVICE_ACCOUNT_CACHE_KEY);
+            } catch (error) {
+              if (error instanceof Error) {
+                toast.error('Failed to toggle account status', {
+                  description: error.message,
+                });
+              }
+            }
+          }}
+        >
           {account.status === SERVICE_ACCOUNT_STATUS.disabled ? (
             <>
               <CircleCheckIcon className="text-green-500" />

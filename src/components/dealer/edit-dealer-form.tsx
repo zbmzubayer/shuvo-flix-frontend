@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { invalidateCache } from '@/actions/cache.action';
 import { useDialog } from '@/components/dialog-controlled';
 import { FileUpload } from '@/components/file-upload';
 import { Button } from '@/components/ui/button';
@@ -19,7 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { useFileUpload } from '@/hooks/use-file-upload';
-import { updateDealer } from '@/services/dealer.service';
+import { DEALER_CACHE_KEY, updateDealer } from '@/services/dealer.service';
 import { uploadFile } from '@/services/file.service';
 import type { Dealer } from '@/types/dealer';
 import { type DealerDto, dealerSchema } from '@/validations/dealer.dto';
@@ -41,13 +42,14 @@ export function EditDealerForm({ dealer }: { dealer: Dealer }) {
     },
   });
 
-  const { mutateAsync, error } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: updateDealer,
     onSuccess: () => {
+      invalidateCache(DEALER_CACHE_KEY);
       toast.success('Dealer updated successfully');
       setOpen(false);
     },
-    onError: () => {
+    onError: (error) => {
       toast.error('Failed to update dealer', {
         description: error?.message,
       });

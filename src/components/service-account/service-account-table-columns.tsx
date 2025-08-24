@@ -6,7 +6,11 @@ import { formatDistanceToNowStrict } from 'date-fns';
 import { ServiceAccountDropdown } from '@/components/service-account/service-account-dropdown';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { SERVICE_ACCOUNT_STATUS, type ServiceAccount } from '@/types/service-account';
+import {
+  SERVICE_ACCOUNT_PAYMENT,
+  SERVICE_ACCOUNT_STATUS,
+  type ServiceAccount,
+} from '@/types/service-account';
 
 const multiColumnFilterFn: FilterFn<ServiceAccount> = (row, _columnId, filterValue) => {
   const searchableRowContent = `${row.original.name}${row.original.email}`.toLowerCase();
@@ -43,13 +47,24 @@ export const serviceAccountTableColumns: ColumnDef<ServiceAccount>[] = [
   {
     accessorKey: 'expiryDate',
     header: 'Expiry Date',
-    cell: ({ row }) => new Date(row.original.expiryDate).toLocaleDateString(),
+    cell: ({ row }) =>
+      `${new Date(row.original.expiryDate).toLocaleDateString()} (${formatDistanceToNowStrict(new Date(row.original.expiryDate))})`,
   },
   {
-    accessorKey: 'leftDays',
-    header: 'Left Days',
-    cell: ({ row }) => `${formatDistanceToNowStrict(new Date(row.original.expiryDate))}`,
-    accessorFn: (row) => row.expiryDate,
+    accessorKey: 'payment',
+    header: 'Payment',
+    cell: ({ row }) => (
+      <Badge
+        className={cn('text-white', {
+          'bg-green-500': row.original.payment === SERVICE_ACCOUNT_PAYMENT.paid,
+          'bg-yellow-500': row.original.payment === SERVICE_ACCOUNT_PAYMENT.due,
+          'bg-red-500': row.original.payment === SERVICE_ACCOUNT_PAYMENT.unpaid,
+        })}
+      >
+        {row.original.payment}
+      </Badge>
+    ),
+    enableSorting: false,
   },
   {
     accessorKey: 'status',
@@ -67,6 +82,7 @@ export const serviceAccountTableColumns: ColumnDef<ServiceAccount>[] = [
       </Badge>
     ),
     enableSorting: false,
+    filterFn: 'arrIncludesSome',
   },
   {
     accessorKey: 'actions',

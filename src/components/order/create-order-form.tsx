@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { invalidateCaches } from '@/actions/cache.action';
 import { Button } from '@/components/ui/button';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
 import { useDialog } from '@/components/ui/dialog';
@@ -27,9 +28,10 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { createOrder } from '@/services/order.service';
+import { CUSTOMER_CACHE_KEY } from '@/services/customer.service';
+import { createOrder, ORDER_CACHE_KEY } from '@/services/order.service';
 import { getAllProviders } from '@/services/provider.service';
-import { getAllServices } from '@/services/service.service';
+import { getAllServices, SERVICE_CACHE_KEY } from '@/services/service.service';
 import { CUSTOMER_SOCIAL } from '@/types/customer';
 import { ORDER_ACCOUNT_TYPE, ORDER_STATUS } from '@/types/order';
 import { type OrderFormDto, orderFormSchema } from '@/validations/order.dto';
@@ -70,6 +72,7 @@ export function CreateOrderForm() {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createOrder,
     onSuccess: () => {
+      invalidateCaches([ORDER_CACHE_KEY, SERVICE_CACHE_KEY, CUSTOMER_CACHE_KEY]);
       setOpen(false);
       toast.success('Order created successfully');
     },

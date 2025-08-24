@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { invalidateCache } from '@/actions/cache.action';
 import { FileUpload } from '@/components/file-upload';
 import { Button } from '@/components/ui/button';
 import { useDialog } from '@/components/ui/dialog';
@@ -20,7 +21,7 @@ import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { useFileUpload } from '@/hooks/use-file-upload';
 import { uploadFile } from '@/services/file.service';
-import { createService } from '@/services/service.service';
+import { createService, SERVICE_CACHE_KEY } from '@/services/service.service';
 import { type ServiceDto, serviceSchema } from '@/validations/service.dto';
 
 export function CreateServiceForm() {
@@ -38,6 +39,7 @@ export function CreateServiceForm() {
   const { mutateAsync } = useMutation({
     mutationFn: createService,
     onSuccess: () => {
+      invalidateCache(SERVICE_CACHE_KEY);
       setOpen(false);
       toast.success('Service created successfully');
     },

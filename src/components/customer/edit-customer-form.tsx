@@ -5,6 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { invalidateCache } from '@/actions/cache.action';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -23,7 +24,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
-import { updateCustomer } from '@/services/customer.service';
+import { CUSTOMER_CACHE_KEY, updateCustomer } from '@/services/customer.service';
 import { CUSTOMER_SOCIAL, type Customer } from '@/types/customer';
 import { type CustomerDto, customerSchema } from '@/validations/customer.dto';
 
@@ -44,13 +45,14 @@ export function EditCustomerForm({ customer, setOpen }: EditCustomerFormProps) {
     },
   });
 
-  const { mutateAsync, isPending, error } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: updateCustomer,
     onSuccess: () => {
+      invalidateCache(CUSTOMER_CACHE_KEY);
       setOpen(false);
       toast.success('Customer updated successfully');
     },
-    onError: () => {
+    onError: (error) => {
       toast.error('Failed to update customer', {
         description: error?.message,
       });

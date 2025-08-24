@@ -5,6 +5,7 @@ import { useMutation, useQueries } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { invalidateCaches } from '@/actions/cache.action';
 import { Button } from '@/components/ui/button';
 import { DatePicker } from '@/components/ui/date-picker';
 import {
@@ -26,8 +27,11 @@ import {
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { getAllDealers } from '@/services/dealer.service';
-import { getAllServices } from '@/services/service.service';
-import { updateServiceAccount } from '@/services/service-account.service';
+import { getAllServices, SERVICE_CACHE_KEY } from '@/services/service.service';
+import {
+  SERVICE_ACCOUNT_CACHE_KEY,
+  updateServiceAccount,
+} from '@/services/service-account.service';
 import { SERVICE_ACCOUNT_PAYMENT, type ServiceAccount } from '@/types/service-account';
 import { type ServiceAccountDto, serviceAccountSchema } from '@/validations/service-account.dto';
 
@@ -61,13 +65,14 @@ export function EditServiceAccountForm({ account, setOpen }: Props) {
     },
   });
 
-  const { mutateAsync, isPending, error } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: updateServiceAccount,
     onSuccess: () => {
+      invalidateCaches([SERVICE_ACCOUNT_CACHE_KEY, SERVICE_CACHE_KEY]);
       setOpen(false);
       toast.success('Account updated successfully');
     },
-    onError: () => {
+    onError: (error) => {
       toast.error('Failed to update account', {
         description: error?.message,
       });

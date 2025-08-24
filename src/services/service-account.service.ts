@@ -1,7 +1,3 @@
-"use server";
-
-import { revalidateTag } from "next/cache";
-
 import { fetchApi } from "@/lib/api";
 import type {
   ServiceAccount,
@@ -9,31 +5,26 @@ import type {
 } from "@/types/service-account";
 import type { ServiceAccountDto } from "@/validations/service-account.dto";
 
+export const SERVICE_ACCOUNT_CACHE_KEY = "service-accounts";
+
 export const createServiceAccount = async (data: ServiceAccountDto) => {
-  const res = await fetchApi<ServiceAccount>("/service-account", {
+  return await fetchApi<ServiceAccount>("/service-account", {
     method: "POST",
     body: JSON.stringify(data),
   });
-
-  revalidateTag("services");
-  revalidateTag("service-accounts");
-
-  return res;
 };
 
 export const getAllServiceAccounts = async () => {
   return await fetchApi<ServiceAccount[]>("/service-account", {
     method: "GET",
-    cache: "no-store",
-    next: { tags: ["service-accounts"] },
+    cache: "force-cache",
+    next: { tags: [SERVICE_ACCOUNT_CACHE_KEY] },
   });
 };
 
 export const getServiceAccountById = async (id: number) => {
   return await fetchApi<ServiceAccountDetails>(`/service-account/${id}`, {
     method: "GET",
-    cache: "no-store",
-    next: { tags: [`service-account-${id}`] },
   });
 };
 
@@ -44,23 +35,20 @@ export const updateServiceAccount = async ({
   id: number;
   data: ServiceAccountDto;
 }) => {
-  const res = await fetchApi<ServiceAccount>(`/service-account/${id}`, {
+  return await fetchApi<ServiceAccount>(`/service-account/${id}`, {
     method: "PATCH",
     body: JSON.stringify(data),
   });
-  revalidateTag("services");
-  revalidateTag("service-accounts");
-
-  return res;
 };
 
 export const deleteServiceAccount = async (id: number) => {
-  const res = await fetchApi<void>(`/service-account/${id}`, {
+  return await fetchApi<void>(`/service-account/${id}`, {
     method: "DELETE",
   });
+};
 
-  revalidateTag("services");
-  revalidateTag("service-accounts");
-
-  return res;
+export const toggleServiceAccountStatus = async (id: number) => {
+  return await fetchApi<void>(`/service-account/toggle-status/${id}`, {
+    method: "PATCH",
+  });
 };
