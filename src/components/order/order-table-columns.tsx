@@ -3,6 +3,7 @@
 import type { ColumnDef, FilterFn } from '@tanstack/react-table';
 import { formatDistanceToNowStrict } from 'date-fns';
 
+import { OrderDropdown } from '@/components/order/order-dropdown';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { ORDER_STATUS, type OrderDetails } from '@/types/order';
@@ -84,45 +85,10 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
     enableSorting: false,
     filterFn: (row, id, value) => value.includes(row.getValue(id)),
   },
-
-  // {
-  //   accessorKey: 'actions',
-  //   header: () => <div className="text-center">Actions</div>,
-  //   cell: ({ row }) => {
-  //     const { mutateAsync } = useMutation({
-  //       mutationFn: () => deleteOrder(row.original.id),
-  //       onSuccess: () => {
-  //         toast.success('Order deleted successfully');
-  //       },
-  //       onError: () => {
-  //         toast.error('Failed to delete order');
-  //       },
-  //     });
-
-  //     return (
-  //       <div className="flex justify-center gap-2">
-  //         <DialogProvider>
-  //           <DialogProviderTrigger asChild>
-  //             <Button className="size-8" variant="outline">
-  //               <EditIcon />
-  //             </Button>
-  //           </DialogProviderTrigger>
-  //           <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
-  //             <DialogHeader>
-  //               <DialogTitle>Edit Order</DialogTitle>
-  //             </DialogHeader>
-  //             <EditOrderForm order={row.original} />
-  //           </DialogContent>
-  //         </DialogProvider>
-
-  //         <DeleteAlertDialog onConfirm={async () => await mutateAsync()}>
-  //           <Button className="size-8" variant="destructive">
-  //             <TrashIcon />
-  //           </Button>
-  //         </DeleteAlertDialog>
-  //       </div>
-  //     );
-  //   },
-  //   enableSorting: false,
-  // },
+  {
+    accessorKey: 'actions',
+    header: () => <span className="sr-only">Actions</span>,
+    cell: ({ row }) => <OrderDropdown order={row.original} />,
+    enableSorting: false,
+  },
 ];

@@ -10,6 +10,7 @@ export type Order = {
   status: OrderStatus;
   startDate: Date;
   endDate: Date;
+  note?: string;
   createdAt: Date;
   updatedAt: Date;
   serviceId: number;
@@ -18,10 +19,7 @@ export type Order = {
   customerId: number;
 };
 
-export type OrderDetails = Omit<
-  Order,
-  "serviceId" | "serviceAccountId" | "providerId" | "customerId"
-> & {
+export type OrderDetails = Order & {
   service: Service;
   serviceAccount: ServiceAccount;
   provider: Provider;

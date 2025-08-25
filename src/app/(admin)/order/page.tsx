@@ -24,8 +24,7 @@ export default async function OrderPage() {
   return (
     <div>
       <AppHeader title="Orders" />
-
-      <div className="mt-5 space-y-2">
+      <div className="space-y-2">
         <DataTableProvider columns={orderTableColumns} data={orders}>
           <div className="flex items-center justify-between">
             <OrderDataTableToolbar />

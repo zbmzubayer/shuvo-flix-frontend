@@ -5,6 +5,7 @@ import { serviceAccountTableColumns } from '@/components/service-account/service
 import { ServiceAccountDataTableToolbar } from '@/components/service-account/service-account-table-toolbar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination';
 import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
 import { DataTable2 } from '@/components/ui/data-table/data-table2';
 import {
@@ -120,13 +121,6 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
         </Card>
       </div>
 
-      {/* <div className="mt-5 grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-3 dark:*:data-[slot=card]:bg-card">
-        {accounts.length ? (
-          accounts.map((account) => <ServiceAccountCard account={account} key={account.id} />)
-        ) : (
-          <p>No accounts found</p>
-        )}
-      </div> */}
       <div className="mt-5 space-y-2">
         <DataTableProvider columns={serviceAccountTableColumns} data={accounts}>
           <div className="flex items-center justify-between">
@@ -152,6 +146,7 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
             </DialogProvider>
           </div>
           <DataTable2 />
+          <DataTablePagination />
         </DataTableProvider>
       </div>
     </div>

@@ -3,7 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueries } from '@tanstack/react-query';
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -18,7 +18,6 @@ import {
   CommandList,
 } from '@/components/ui/command';
 import { DateRangePicker } from '@/components/ui/date-range-picker';
-import { useDialog } from '@/components/ui/dialog';
 import {
   Form,
   FormControl,
@@ -40,22 +39,25 @@ import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { CUSTOMER_CACHE_KEY, getAllCustomers } from '@/services/customer.service';
-import { createOrder, ORDER_CACHE_KEY } from '@/services/order.service';
+import { ORDER_CACHE_KEY, updateOrder } from '@/services/order.service';
 import { getAllProviders } from '@/services/provider.service';
 import { getAllServices, SERVICE_CACHE_KEY } from '@/services/service.service';
 import { CUSTOMER_SOCIAL } from '@/types/customer';
-import { ORDER_ACCOUNT_TYPE, ORDER_STATUS } from '@/types/order';
+import { ORDER_ACCOUNT_TYPE, ORDER_STATUS, type OrderDetails } from '@/types/order';
 import { type OrderFormDto, orderFormSchema } from '@/validations/order.dto';
 
-export function CreateOrderForm() {
+interface EditOrderFormProps {
+  order: OrderDetails;
+  setOpen: (open: boolean) => void;
+}
+
+export function EditOrderForm({ order, setOpen }: EditOrderFormProps) {
   const [popOverOpen, setPopOverOpen] = useState(false);
-  const { setOpen } = useDialog();
-  const [selectedServiceIndex, setSelectedServiceIndex] = useState<number>(0);
-  const [{ data: services }, { data: providers }, { data: customers }] = useQueries({
+  const [{ data: customers }, { data: services }, { data: providers }] = useQueries({
     queries: [
+      { queryKey: ['customers'], queryFn: getAllCustomers },
       { queryKey: ['services'], queryFn: getAllServices },
       { queryKey: ['providers'], queryFn: getAllProviders },
-      { queryKey: ['customers'], queryFn: getAllCustomers },
     ],
   });
 
@@ -63,34 +65,40 @@ export function CreateOrderForm() {
     resolver: zodResolver(orderFormSchema),
     defaultValues: {
       customer: {
-        name: '',
-        personalEmail: '',
-        phone: '',
-        socialLink: '',
+        name: order.customer.name,
+        personalEmail: order.customer.personalEmail,
+        phone: order.customer.phone,
+        social: order.customer.social ?? undefined,
+        socialLink: order.customer.socialLink ?? '',
       },
-      email: '',
+      email: order.email,
+      serviceId: order.serviceId,
+      serviceAccountId: order.serviceAccountId,
+      providerId: order.providerId,
+      status: order.status,
+      accountType: order.accountType,
+      dateRange: {
+        from: new Date(order.startDate),
+        to: new Date(order.endDate),
+      },
+      note: order.note ?? '',
     },
   });
 
-  useEffect(() => {
-    if (services) {
-      form.setValue('serviceId', services?.[selectedServiceIndex]?.id);
-    }
-  }, [services]);
-
-  useEffect(() => {
-    form.resetField('serviceAccountId');
-  }, [selectedServiceIndex]);
+  const selectedService = useMemo(
+    () => services?.find((s) => s.id === form.watch('serviceId')),
+    [services, form.watch('serviceId')]
+  );
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: createOrder,
+    mutationFn: updateOrder,
     onSuccess: () => {
       invalidateCaches([ORDER_CACHE_KEY, SERVICE_CACHE_KEY, CUSTOMER_CACHE_KEY]);
       setOpen(false);
-      toast.success('Order created successfully');
+      toast.success('Order updated successfully');
     },
     onError: (error) => {
-      toast.error('Failed to create order', {
+      toast.error('Failed to update order', {
         description: error?.message,
       });
     },
@@ -98,7 +106,10 @@ export function CreateOrderForm() {
 
   const onSubmit = async (values: OrderFormDto) => {
     const { dateRange, ...data } = values;
-    await mutateAsync({ ...data, startDate: dateRange.from, endDate: dateRange.to });
+    await mutateAsync({
+      id: order.id,
+      data: { ...data, startDate: dateRange.from, endDate: dateRange.to },
+    });
   };
 
   return (
@@ -122,7 +133,9 @@ export function CreateOrderForm() {
                   <Button
                     aria-expanded={popOverOpen}
                     className="justify-between"
+                    disabled
                     role="combobox"
+                    type="button"
                     variant="outline"
                   >
                     {field.value || 'Select customer'}
@@ -177,22 +190,6 @@ export function CreateOrderForm() {
             </FormItem>
           )}
         />
-        {/* 
-        <FormField
-          control={form.control}
-          name="customer.phone"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between">
-                <FormLabel>Phone</FormLabel>
-                <FormMessage />
-              </div>
-              <FormControl>
-                <Input placeholder="Enter customer phone" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        /> */}
         <FormField
           control={form.control}
           name="customer.name"
@@ -251,20 +248,17 @@ export function CreateOrderForm() {
                 <div className="flex items-center">
                   <Select
                     onValueChange={(value) => {
-                      const index = Number(value);
-                      setSelectedServiceIndex(index);
-                      if (services) {
-                        form.setValue('serviceId', services[index]?.id);
-                      }
+                      form.setValue('serviceId', Number(value));
+                      field.onChange('');
                     }}
-                    value={selectedServiceIndex.toString()}
+                    value={form.getValues('serviceId')?.toString() || ''}
                   >
                     <SelectTrigger className="w-2/5 rounded-r-none">
                       <SelectValue placeholder="Service" />
                     </SelectTrigger>
                     <SelectContent>
-                      {services?.map((item, index) => (
-                        <SelectItem key={item.id} value={index.toString()}>
+                      {services?.map((item) => (
+                        <SelectItem key={item.id} value={item.id.toString()}>
                           {item.name}
                         </SelectItem>
                       ))}
@@ -280,9 +274,8 @@ export function CreateOrderForm() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {services?.length &&
-                      services[selectedServiceIndex]?.serviceAccounts?.length ? (
-                        services[selectedServiceIndex]?.serviceAccounts?.map((item) => (
+                      {services?.length && selectedService?.serviceAccounts?.length ? (
+                        selectedService.serviceAccounts.map((item) => (
                           <SelectItem key={item.id} value={item.id.toString()}>
                             {item.name}
                           </SelectItem>
@@ -308,7 +301,10 @@ export function CreateOrderForm() {
                 <FormLabel>Provider</FormLabel>
                 <FormMessage />
               </div>
-              <Select onValueChange={(value) => field.onChange(Number(value))}>
+              <Select
+                onValueChange={(value) => field.onChange(Number(value))}
+                value={field.value?.toString() || ''}
+              >
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select a provider" />
@@ -334,7 +330,7 @@ export function CreateOrderForm() {
                 <FormLabel>Status</FormLabel>
                 <FormMessage />
               </div>
-              <Select onValueChange={field.onChange}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select order status" />
@@ -375,7 +371,7 @@ export function CreateOrderForm() {
                 <FormLabel>Account Type</FormLabel>
                 <FormMessage />
               </div>
-              <Select onValueChange={field.onChange}>
+              <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select account type" />
@@ -441,7 +437,7 @@ export function CreateOrderForm() {
         <div className="col-span-2 mt-2 flex justify-end">
           <Button disabled={isPending} type="submit">
             {isPending && <Spinner />}
-            Create Order
+            Save
           </Button>
         </div>
       </form>
