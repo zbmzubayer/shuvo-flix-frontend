@@ -1,4 +1,5 @@
 import type { Customer } from "@/types/customer";
+import type { Dealer } from "@/types/dealer";
 import type { Order } from "@/types/order";
 
 export type ServiceAccount = {
@@ -23,6 +24,10 @@ export type ServiceAccount = {
 
 export type OrderWithCustomer = Omit<Order, "customerId"> & {
   customer: Customer;
+};
+
+export type ServiceAccountWithDealer = ServiceAccount & {
+  dealer: Dealer;
 };
 
 export type ServiceAccountDetails = ServiceAccount & {

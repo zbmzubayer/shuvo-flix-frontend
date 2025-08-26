@@ -19,7 +19,7 @@ export const getAllServices = async () => {
   });
 };
 
-export const getServiceById = async (id: string) => {
+export const getServiceById = async (id: number) => {
   return await fetchApi<ServiceWithServiceAccount>(`/service/${id}`, {
     method: "GET",
   });

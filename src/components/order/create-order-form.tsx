@@ -152,8 +152,11 @@ export function CreateOrderForm() {
                               form.setValue('customer.phone', customer.phone);
                               form.setValue('customer.name', customer.name);
                               form.setValue('customer.personalEmail', customer.personalEmail);
-                              form.setValue('customer.social', customer.social);
-                              form.setValue('customer.socialLink', customer.socialLink);
+                              form.setValue('customer.social', customer.social || undefined);
+                              form.setValue(
+                                'customer.socialLink',
+                                customer.socialLink || undefined
+                              );
                               setPopOverOpen(false);
                             }}
                             value={customer.phone}

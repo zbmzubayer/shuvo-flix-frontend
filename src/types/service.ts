@@ -1,4 +1,4 @@
-import type { ServiceAccount } from "@/types/service-account";
+import type { ServiceAccountWithDealer } from "@/types/service-account";
 
 export type Service = {
   id: number;
@@ -9,5 +9,5 @@ export type Service = {
 };
 
 export type ServiceWithServiceAccount = Service & {
-  serviceAccounts: ServiceAccount[];
+  serviceAccounts: ServiceAccountWithDealer[];
 };

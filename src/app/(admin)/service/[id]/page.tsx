@@ -6,6 +6,7 @@ import { ServiceAccountDataTableToolbar } from '@/components/service-account/ser
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/data-table';
+import type { FilterField } from '@/components/ui/data-table/data-table.interface';
 import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination';
 import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
 import {
@@ -17,8 +18,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { AppHeader } from '@/layouts/app-header';
+import { getAllDealers } from '@/services/dealer.service';
 import { getServiceById } from '@/services/service.service';
-import { SERVICE_ACCOUNT_STATUS, type ServiceAccount } from '@/types/service-account';
+import {
+  ACCOUNT_STATUS,
+  SERVICE_ACCOUNT_PAYMENT,
+  SERVICE_ACCOUNT_STATUS,
+  type ServiceAccount,
+} from '@/types/service-account';
 
 const calculateAccountStats = (accounts: ServiceAccount[]) => {
   let totalActiveAccounts = 0;
@@ -49,8 +56,7 @@ const calculateAccountStats = (accounts: ServiceAccount[]) => {
 
 export default async function ServiceAccountPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const service = await getServiceById(id);
-
+  const [service, dealers] = await Promise.all([getServiceById(Number(id)), getAllDealers()]);
   const accounts = service.serviceAccounts || [];
 
   const {
@@ -61,6 +67,45 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
     totalUnsoldSharedSlots,
     expiredAccounts,
   } = calculateAccountStats(accounts);
+
+  const filterFields: FilterField[] = [
+    {
+      column: 'payment',
+      title: 'Payment',
+      options: [
+        { label: SERVICE_ACCOUNT_PAYMENT.paid, value: SERVICE_ACCOUNT_PAYMENT.paid },
+        { label: SERVICE_ACCOUNT_PAYMENT.due, value: SERVICE_ACCOUNT_PAYMENT.due },
+        { label: SERVICE_ACCOUNT_PAYMENT.unpaid, value: SERVICE_ACCOUNT_PAYMENT.unpaid },
+      ],
+    },
+    {
+      column: 'status',
+      title: 'Status',
+      options: [
+        { label: SERVICE_ACCOUNT_STATUS.new, value: SERVICE_ACCOUNT_STATUS.new },
+        { label: SERVICE_ACCOUNT_STATUS.partial, value: SERVICE_ACCOUNT_STATUS.partial },
+        { label: SERVICE_ACCOUNT_STATUS.full, value: SERVICE_ACCOUNT_STATUS.full },
+        { label: SERVICE_ACCOUNT_STATUS.disabled, value: SERVICE_ACCOUNT_STATUS.disabled },
+      ],
+    },
+    {
+      column: 'accountStatus',
+      title: 'Account Status',
+      options: [
+        { label: ACCOUNT_STATUS.active, value: ACCOUNT_STATUS.active },
+        { label: ACCOUNT_STATUS.expired, value: ACCOUNT_STATUS.expired },
+        { label: ACCOUNT_STATUS.expiringSoon, value: ACCOUNT_STATUS.expiringSoon },
+      ],
+    },
+    {
+      column: 'dealerId',
+      title: 'Dealer',
+      options: dealers.map((dealer) => ({
+        label: dealer.name,
+        value: dealer.id,
+      })),
+    },
+  ];
 
   return (
     <div>
@@ -124,7 +169,7 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
       <div className="mt-5 space-y-2">
         <DataTableProvider columns={serviceAccountTableColumns} data={accounts}>
           <div className="flex items-center justify-between">
-            <ServiceAccountDataTableToolbar />
+            <ServiceAccountDataTableToolbar filterFields={filterFields} />
             <DialogProvider>
               <DialogProviderTrigger asChild>
                 <Button size="sm">

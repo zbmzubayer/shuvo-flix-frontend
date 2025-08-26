@@ -76,6 +76,7 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
     header: 'Provider',
     cell: ({ row }) => `${row.original.provider.name}`,
     enableSorting: false,
+    filterFn: (row, columnId, filterValue) => filterValue.includes(row.getValue(columnId)),
   },
   {
     accessorKey: 'serviceAccount.name',
@@ -112,7 +113,7 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
       </Badge>
     ),
     enableSorting: false,
-    filterFn: (row, id, value) => value.includes(row.getValue(id)),
+    filterFn: (row, columnId, filterValue) => filterValue.includes(row.getValue(columnId)),
   },
   {
     accessorKey: 'actions',

@@ -11,16 +11,16 @@ import {
   type AccountStatus,
   SERVICE_ACCOUNT_PAYMENT,
   SERVICE_ACCOUNT_STATUS,
-  type ServiceAccount,
+  type ServiceAccountWithDealer,
 } from '@/types/service-account';
 
-const multiColumnFilterFn: FilterFn<ServiceAccount> = (row, _columnId, filterValue) => {
+const multiColumnFilterFn: FilterFn<ServiceAccountWithDealer> = (row, _columnId, filterValue) => {
   const searchableRowContent = `${row.original.name}${row.original.email}`.toLowerCase();
   const searchTerm = (filterValue ?? '').toLowerCase();
   return searchableRowContent.includes(searchTerm);
 };
 
-export const serviceAccountTableColumns: ColumnDef<ServiceAccount>[] = [
+export const serviceAccountTableColumns: ColumnDef<ServiceAccountWithDealer>[] = [
   {
     accessorKey: 'name',
     header: 'Name',
@@ -28,18 +28,35 @@ export const serviceAccountTableColumns: ColumnDef<ServiceAccount>[] = [
   },
   {
     accessorKey: 'email',
-    header: 'Email',
+    header: 'Email & Pass',
+    cell: ({ row }) => (
+      <div className="flex flex-col">
+        <span>{row.original.email}</span>
+        <span className="text-muted-foreground">{row.original.password}</span>
+      </div>
+    ),
   },
-  { accessorKey: 'password', header: 'Password' },
+  {
+    accessorKey: 'dealerId',
+    header: 'Dealer',
+    cell: ({ row }) => row.original.dealer.name,
+    filterFn: (row, columnId, filterValue) => filterValue.includes(row.getValue(columnId)),
+  },
   {
     accessorKey: 'personalSlots',
     header: 'Personal Slots',
     cell: ({ row }) => `${row.original.soldPersonalSlots || 0}/${row.original.personalSlots || 0}`,
+    // accessorFn: (row) =>
+    //   row.soldPersonalSlots && row.personalSlots ? row.soldPersonalSlots / row.personalSlots : 0,
+    enableSorting: false,
   },
   {
     accessorKey: 'sharedSlots',
     header: 'Shared Slots',
     cell: ({ row }) => `${row.original.soldSharedSlots || 0}/${row.original.sharedSlots || 0}`,
+    // accessorFn: (row) =>
+    //   row.soldSharedSlots && row.sharedSlots ? row.soldSharedSlots / row.sharedSlots : 0,
+    enableSorting: false,
   },
   {
     accessorKey: 'joinDate',

@@ -58,7 +58,7 @@ const dateRanges = {
 } as const;
 
 interface DatePickerProps {
-  rangeType: keyof typeof dateRanges;
+  rangeType?: keyof typeof dateRanges;
   className?: string;
   value?: DateRange;
   onChange: (date?: DateRange) => void;

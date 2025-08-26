@@ -58,28 +58,29 @@ export default async function OrderPage() {
     <div>
       <AppHeader title="Orders" />
       <div className="space-y-2">
-        <DialogProvider>
-          <DialogProviderTrigger asChild>
-            <Button size="sm">
-              <PlusIcon />
-              Create Order
-            </Button>
-          </DialogProviderTrigger>
-          <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-xl">
-            <div className="overflow-y-auto p-6">
-              <DialogHeader className="mb-2">
-                <DialogTitle>Create Order</DialogTitle>
-                <DialogDescription>
-                  Fill in the details below to create a new order.
-                </DialogDescription>
-              </DialogHeader>
-              <CreateOrderForm />
-            </div>
-          </DialogContent>
-        </DialogProvider>
         <DataTableProvider columns={orderTableColumns} data={orders}>
-          <OrderDataTableToolbar filterFields={filterFields} />
-
+          <div className="flex items-center justify-between">
+            <OrderDataTableToolbar filterFields={filterFields} />
+            <DialogProvider>
+              <DialogProviderTrigger asChild>
+                <Button size="sm">
+                  <PlusIcon />
+                  Create Order
+                </Button>
+              </DialogProviderTrigger>
+              <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-xl">
+                <div className="overflow-y-auto p-6">
+                  <DialogHeader className="mb-2">
+                    <DialogTitle>Create Order</DialogTitle>
+                    <DialogDescription>
+                      Fill in the details below to create a new order.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <CreateOrderForm />
+                </div>
+              </DialogContent>
+            </DialogProvider>
+          </div>
           <DataTable />
           <DataTablePagination />
         </DataTableProvider>

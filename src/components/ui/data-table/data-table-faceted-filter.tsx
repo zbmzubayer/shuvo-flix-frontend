@@ -1,7 +1,6 @@
 import type { Column } from '@tanstack/react-table';
 import { CheckIcon, FilterIcon } from 'lucide-react';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -14,7 +13,6 @@ import {
 } from '@/components/ui/command';
 import type { FilterField } from '@/components/ui/data-table/data-table.interface';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
 interface DataTableFacetedFilterProps<TData, TValue> extends Omit<FilterField, 'column'> {
@@ -35,7 +33,7 @@ export function DataTableFacetedFilter<TData, TValue>({
         <Button className="h-8 border-dashed" size="sm" variant="outline">
           <FilterIcon />
           {title}
-          {selectedValues?.size > 0 && (
+          {/* {selectedValues?.size > 0 && (
             <>
               <Separator className="mx-2 h-4" orientation="vertical" />
               <Badge className="rounded-sm px-1 font-normal lg:hidden" variant="secondary">
@@ -61,7 +59,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                 )}
               </div>
             </>
-          )}
+          )} */}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-[200px] p-0">
