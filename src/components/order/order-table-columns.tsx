@@ -2,11 +2,13 @@
 
 import type { ColumnDef, FilterFn } from '@tanstack/react-table';
 import { formatDistanceToNowStrict } from 'date-fns';
+import type { DateRange } from 'react-day-picker';
 
 import { OrderDropdown } from '@/components/order/order-dropdown';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { ORDER_STATUS, type OrderDetails } from '@/types/order';
+import { ACCOUNT_STATUS, type AccountStatus } from '@/types/service-account';
 
 const multiColumnFilterFn: FilterFn<OrderDetails> = (row, _columnId, filterValue) => {
   const searchableRowContent =
@@ -50,23 +52,50 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
   {
     accessorKey: 'endDate',
     header: 'End Date',
-    cell: ({ row }) => `${new Date(row.original.endDate).toLocaleDateString()}`,
+    cell: ({ row }) =>
+      `${new Date(row.original.endDate).toLocaleDateString()} (${formatDistanceToNowStrict(new Date(row.original.endDate))})`,
   },
-  {
-    accessorKey: 'leftDays',
-    header: 'Left Days',
-    cell: ({ row }) => `${formatDistanceToNowStrict(new Date(row.original.endDate))}`,
-    accessorFn: (row) => row.endDate,
-  },
+  // {
+  //   accessorKey: 'leftDays',
+  //   header: 'Left Days',
+  //   cell: ({ row }) => `${formatDistanceToNowStrict(new Date(row.original.endDate))}`,
+  //   accessorFn: (row) => row.endDate,
+  // },
   {
     accessorKey: 'createdAt',
     header: 'Order Date',
     cell: ({ row }) => new Date(row.original.createdAt).toLocaleDateString(),
+    filterFn: (row, _columnId, filterValue: DateRange) => {
+      const createdAt = new Date(row.original.createdAt);
+      if (!(filterValue.from && filterValue.to)) return true;
+      return createdAt >= filterValue.from && createdAt <= filterValue.to;
+    },
+  },
+  {
+    accessorKey: 'providerId',
+    header: 'Provider',
+    cell: ({ row }) => `${row.original.provider.name}`,
+    enableSorting: false,
   },
   {
     accessorKey: 'serviceAccount.name',
     header: 'Service Account',
     cell: ({ row }) => `${row.original.serviceAccount.name} (${row.original.accountType})`,
+    enableSorting: false,
+  },
+  {
+    accessorKey: 'accountStatus',
+    header: 'Acc Status',
+    accessorFn: (row): AccountStatus => {
+      const today = new Date();
+      const endDate = new Date(row.endDate);
+      if (endDate < today) return ACCOUNT_STATUS.expired;
+      today.setDate(today.getDate() + 2);
+      if (endDate < today) return ACCOUNT_STATUS.expiringSoon;
+      return ACCOUNT_STATUS.active;
+    },
+    filterFn: 'arrIncludesSome',
+    enableSorting: false,
   },
   {
     accessorKey: 'status',

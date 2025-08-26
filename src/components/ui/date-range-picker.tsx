@@ -1,6 +1,6 @@
 'use client';
 
-import { addDays, addMonths, addYears } from 'date-fns';
+import { addDays, addMonths, addYears, subDays, subMonths, subYears } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -8,69 +8,98 @@ import type { DateRange } from 'react-day-picker';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { cn } from '@/lib/utils';
+
+const today = new Date();
+// const next7Days = {
+//   from: today,
+//   to: addDays(today, 6),
+// };
+// const next30Days = {
+//   from: today,
+//   to: addDays(today, 30),
+// };
+// const nextMonth = {
+//   from: today,
+//   to: addMonths(today, 1),
+// };
+// const next3months = {
+//   from: today,
+//   to: addMonths(today, 3),
+// };
+// const next6months = {
+//   from: today,
+//   to: addMonths(today, 6),
+// };
+// const nextYear = {
+//   from: today,
+//   to: addYears(today, 1),
+// };
+
+const dateRanges = {
+  next: [
+    { label: 'Today', range: { from: today, to: today } },
+    { label: 'Next 7 days', range: { from: today, to: addDays(today, 6) } },
+    { label: 'Next 30 days', range: { from: today, to: addDays(today, 30) } },
+    { label: 'Next month', range: { from: today, to: addMonths(today, 1) } },
+    { label: 'Next 3 months', range: { from: today, to: addMonths(today, 3) } },
+    { label: 'Next 6 months', range: { from: today, to: addMonths(today, 6) } },
+    { label: 'Next year', range: { from: today, to: addYears(today, 1) } },
+  ],
+  previous: [
+    { label: 'Today', range: { from: today, to: today } },
+    { label: 'Last 7 days', range: { from: subDays(today, 6), to: today } },
+    { label: 'Last 30 days', range: { from: subDays(today, 30), to: today } },
+    { label: 'Last month', range: { from: subMonths(today, 1), to: today } },
+    { label: 'Last 3 months', range: { from: subMonths(today, 3), to: today } },
+    { label: 'Last 6 months', range: { from: subMonths(today, 6), to: today } },
+    { label: 'Last year', range: { from: subYears(today, 1), to: today } },
+  ],
+} as const;
 
 interface DatePickerProps {
+  rangeType: keyof typeof dateRanges;
+  className?: string;
   value?: DateRange;
   onChange: (date?: DateRange) => void;
 }
 
-const today = new Date();
-const next7Days = {
-  from: today,
-  to: addDays(today, 6),
-};
-const next30Days = {
-  from: today,
-  to: addDays(today, 30),
-};
-const nextMonth = {
-  from: today,
-  to: addMonths(today, 1),
-};
-const next3months = {
-  from: today,
-  to: addMonths(today, 3),
-};
-const next6months = {
-  from: today,
-  to: addMonths(today, 6),
-};
-const nextYear = {
-  from: today,
-  to: addYears(today, 1),
-};
-
-export function DateRangePicker({ value, onChange }: DatePickerProps) {
+export function DateRangePicker({
+  rangeType = 'next',
+  className,
+  value,
+  onChange,
+}: DatePickerProps) {
   const [month, setMonth] = useState(today);
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button className="w-full justify-between font-normal" variant="outline">
+        <Button className={cn('w-full justify-between font-normal', className)} variant="outline">
           {value?.from && value?.to
             ? `${value.from?.toLocaleDateString()} - ${value.to?.toLocaleDateString()}`
-            : 'Select date'}
+            : 'Select date range'}
           <CalendarIcon className="text-muted-foreground" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-auto overflow-hidden p-0">
+      <PopoverContent align="start" className="w-auto overflow-hidden p-0" side="top">
         <div className="flex flex-col-reverse sm:flex-row">
           <div className="flex flex-col p-2 max-sm:border-t sm:border-r">
-            <Button
-              className="w-full justify-start font-normal"
-              onClick={() => {
-                onChange({
-                  from: today,
-                  to: today,
-                });
-                setMonth(today);
-              }}
-              size="sm"
-              variant="ghost"
-            >
-              Today
-            </Button>
-            <Button
+            {dateRanges[rangeType].map((item) => (
+              <Button
+                className="w-full justify-start font-normal"
+                key={item.label}
+                onClick={() => {
+                  onChange(item.range);
+                  setMonth(item.range.to);
+                }}
+                size="sm"
+                variant="ghost"
+              >
+                {item.label}
+              </Button>
+            ))}
+            {/* <Button
               className="w-full justify-start font-normal"
               onClick={() => {
                 onChange(next7Days);
@@ -135,7 +164,7 @@ export function DateRangePicker({ value, onChange }: DatePickerProps) {
               variant="ghost"
             >
               Next year
-            </Button>
+            </Button> */}
           </div>
           <Calendar
             className="p-2"

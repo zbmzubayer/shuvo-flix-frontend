@@ -7,6 +7,8 @@ import { ServiceAccountDropdown } from '@/components/service-account/service-acc
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
+  ACCOUNT_STATUS,
+  type AccountStatus,
   SERVICE_ACCOUNT_PAYMENT,
   SERVICE_ACCOUNT_STATUS,
   type ServiceAccount,
@@ -49,6 +51,20 @@ export const serviceAccountTableColumns: ColumnDef<ServiceAccount>[] = [
     header: 'Expiry Date',
     cell: ({ row }) =>
       `${new Date(row.original.expiryDate).toLocaleDateString()} (${formatDistanceToNowStrict(new Date(row.original.expiryDate))})`,
+  },
+  {
+    accessorKey: 'accountStatus',
+    header: 'Acc Status',
+    accessorFn: (row): AccountStatus => {
+      const today = new Date();
+      const endDate = new Date(row.expiryDate);
+      if (endDate < today) return ACCOUNT_STATUS.expired;
+      today.setDate(today.getDate() + 2);
+      if (endDate < today) return ACCOUNT_STATUS.expiringSoon;
+      return ACCOUNT_STATUS.active;
+    },
+    filterFn: 'arrIncludesSome',
+    enableSorting: false,
   },
   {
     accessorKey: 'payment',

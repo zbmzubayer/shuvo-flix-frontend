@@ -3,8 +3,9 @@ import { PlusIcon } from 'lucide-react';
 import { CreateProviderForm } from '@/components/provider/create-provider-form';
 import { providerTableColumns } from '@/components/provider/provider-table-columns';
 import { Button } from '@/components/ui/button';
+import { DataTable } from '@/components/ui/data-table';
+import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination';
 import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
-import { DataTable2 } from '@/components/ui/data-table/data-table2';
 import {
   DialogContent,
   DialogHeader,
@@ -36,9 +37,10 @@ export default async function ProviderPage() {
         </DialogContent>
       </DialogProvider>
 
-      <div className="mt-5 max-w-lg overflow-hidden rounded-md border">
+      <div className="mt-5 max-w-2xl space-y-2">
         <DataTableProvider columns={providerTableColumns} data={providers}>
-          <DataTable2 />
+          <DataTable />
+          <DataTablePagination />
         </DataTableProvider>
       </div>
     </div>

@@ -18,6 +18,7 @@ export const customerTableColumns: ColumnDef<CustomerDetails>[] = [
   {
     accessorKey: 'id',
     header: 'Customer ID',
+    enableSorting: false,
   },
   {
     accessorKey: 'name',
@@ -36,7 +37,8 @@ export const customerTableColumns: ColumnDef<CustomerDetails>[] = [
   {
     accessorKey: 'lastPurchase',
     header: 'Last Purchase',
-    cell: ({ row }) => `${formatDistanceToNowStrict(new Date(row.original.lastPurchase))} ago`,
+    cell: ({ row }) =>
+      `${new Date(row.original.lastPurchase).toLocaleDateString()} (${formatDistanceToNowStrict(new Date(row.original.lastPurchase))} ago)`,
   },
   {
     accessorKey: 'createdAt',
@@ -47,6 +49,7 @@ export const customerTableColumns: ColumnDef<CustomerDetails>[] = [
     accessorKey: 'social',
     header: 'Social',
     cell: ({ row }) => row.original.social || 'N/A',
+    filterFn: 'arrIncludesSome',
     enableSorting: false,
   },
   {

@@ -12,18 +12,13 @@ import {
   CommandList,
   CommandSeparator,
 } from '@/components/ui/command';
+import type { FilterField } from '@/components/ui/data-table/data-table.interface';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 
-interface DataTableFacetedFilterProps<TData, TValue> {
+interface DataTableFacetedFilterProps<TData, TValue> extends Omit<FilterField, 'column'> {
   column?: Column<TData, TValue>;
-  title: string;
-  options: {
-    label: React.ReactNode;
-    value: string;
-    icon?: React.ComponentType<{ className?: string }>;
-  }[];
 }
 
 export function DataTableFacetedFilter<TData, TValue>({
@@ -32,7 +27,7 @@ export function DataTableFacetedFilter<TData, TValue>({
   options,
 }: DataTableFacetedFilterProps<TData, TValue>) {
   const facets = column?.getFacetedUniqueValues();
-  const selectedValues = new Set(column?.getFilterValue() as string[]);
+  const selectedValues = new Set(column?.getFilterValue() as (typeof options)[number]['value'][]);
 
   return (
     <Popover>

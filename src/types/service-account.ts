@@ -47,3 +47,16 @@ export const SERVICE_ACCOUNT_STATUS = {
 
 export type ServiceAccountStatus =
   (typeof SERVICE_ACCOUNT_STATUS)[keyof typeof SERVICE_ACCOUNT_STATUS];
+
+/**
+ * This is a generic account status
+ * It is just for filtering on table - customer (order accounts) and service accounts
+ */
+export const ACCOUNT_STATUS = {
+  active: "On going",
+  expired: "Expired",
+  expiringSoon: "Expiring Soon",
+} as const;
+
+export type AccountStatus =
+  (typeof ACCOUNT_STATUS)[keyof typeof ACCOUNT_STATUS];

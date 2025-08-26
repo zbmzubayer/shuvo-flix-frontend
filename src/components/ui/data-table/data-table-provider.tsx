@@ -14,12 +14,6 @@ import {
 } from '@tanstack/react-table';
 import { createContext, useContext, useState } from 'react';
 
-export interface FilterField {
-  column: string;
-  title: string;
-  options: { label: React.ReactNode; value: string }[];
-}
-
 interface DataTableContextValues<TData> {
   table: ReturnType<typeof useReactTable<TData>>;
   columnLength: number;

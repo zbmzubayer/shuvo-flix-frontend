@@ -1,13 +1,13 @@
-import { PlusIcon } from 'lucide-react';
+import { BadgeAlertIcon, BadgeCheckIcon, ListCheckIcon, ListXIcon, PlusIcon } from 'lucide-react';
 
 import { CreateServiceAccountForm } from '@/components/service-account/create-service-account-form';
 import { serviceAccountTableColumns } from '@/components/service-account/service-account-table-columns';
 import { ServiceAccountDataTableToolbar } from '@/components/service-account/service-account-table-toolbar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { DataTable } from '@/components/ui/data-table';
 import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination';
 import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
-import { DataTable2 } from '@/components/ui/data-table/data-table2';
 import {
   DialogContent,
   DialogDescription,
@@ -68,22 +68,22 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
 
       <div className="mt-5 grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-4 dark:*:data-[slot=card]:bg-card">
         <Card className="gap-2 p-0 pb-2">
-          <div className="border-b px-10 py-2">
+          <div className="flex items-center justify-center gap-2 border-b py-2">
+            <BadgeCheckIcon className="size-5 text-green-500" />
             <h3 className="font-semibold">Total Active Account</h3>
           </div>
-          <div className="px-10">
-            <p className="font-bold text-2xl tabular-nums">{totalActiveAccounts}</p>
-          </div>
+          <p className="text-center font-bold text-2xl tabular-nums">{totalActiveAccounts}</p>
         </Card>
         <Card className="gap-2 p-0 pb-2">
-          <div className="border-b px-10 py-2">
+          <div className="flex items-center justify-center gap-2 border-b py-2">
+            <ListCheckIcon className="size-5 text-green-500" />
             <h3 className="font-semibold">Total Sold Slot</h3>
           </div>
-          <div className="flex justify-between px-10">
+          <div className="flex items-center justify-center gap-5">
             <p className="font-bold text-2xl tabular-nums">
               {totalSoldPersonalSlots + totalSoldSharedSlots}
             </p>
-            <div className="inline-flex flex-col gap-2 font-medium text-xs">
+            <div className="inline-flex gap-2 font-medium text-xs">
               <div className="inline-flex items-center justify-center rounded-lg border-2 px-3 py-2">
                 Personal: {totalSoldPersonalSlots}
               </div>
@@ -94,14 +94,15 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
           </div>
         </Card>
         <Card className="gap-2 p-0 pb-2">
-          <div className="border-b px-10 py-2">
+          <div className="flex items-center justify-center gap-2 border-b py-2">
+            <ListXIcon className="size-5 text-orange-600" />
             <h3 className="font-semibold">Total Unsold Slot</h3>
           </div>
-          <div className="flex justify-between px-10">
+          <div className="flex items-center justify-center gap-5">
             <p className="font-bold text-2xl tabular-nums">
               {totalUnsoldPersonalSlots + totalUnsoldSharedSlots}
             </p>
-            <div className="inline-flex flex-col gap-2 font-medium text-xs">
+            <div className="inline-flex gap-2 font-medium text-xs">
               <div className="inline-flex items-center justify-center rounded-lg border-2 px-3 py-2">
                 Personal: {totalUnsoldPersonalSlots}
               </div>
@@ -112,12 +113,11 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
           </div>
         </Card>
         <Card className="gap-2 p-0 pb-2">
-          <div className="border-b px-10 py-2">
+          <div className="flex items-center justify-center gap-2 border-b py-2">
+            <BadgeAlertIcon className="size-5 text-red-500" />
             <h3 className="font-semibold">Expired Account</h3>
           </div>
-          <div className="px-10">
-            <p className="font-bold text-2xl tabular-nums">{expiredAccounts}</p>
-          </div>
+          <p className="text-center font-bold text-2xl tabular-nums">{expiredAccounts}</p>
         </Card>
       </div>
 
@@ -145,7 +145,7 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
               </DialogContent>
             </DialogProvider>
           </div>
-          <DataTable2 />
+          <DataTable />
           <DataTablePagination />
         </DataTableProvider>
       </div>

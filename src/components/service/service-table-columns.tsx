@@ -28,7 +28,10 @@ export const serviceTableColumns: ColumnDef<Service>[] = [
     ),
     enableSorting: false,
   },
-  { accessorKey: 'name', header: 'Name' },
+  {
+    accessorKey: 'name',
+    header: 'Name',
+  },
   {
     accessorKey: 'createdAt',
     header: 'Created At',

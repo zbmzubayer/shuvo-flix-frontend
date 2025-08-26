@@ -1,4 +1,4 @@
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, TicketCheckIcon, TicketMinusIcon, TicketXIcon } from 'lucide-react';
 
 import { CreateServiceForm } from '@/components/service/create-service-form';
 import { ServiceCard } from '@/components/service/service-card';
@@ -53,7 +53,7 @@ export default async function ServicePage() {
       <AppHeader title="Services" />
       <DialogProvider>
         <DialogProviderTrigger asChild>
-          <Button>
+          <Button size="sm">
             <PlusIcon className="size-4" />
             Create Service
           </Button>
@@ -65,9 +65,10 @@ export default async function ServicePage() {
           <CreateServiceForm />
         </DialogContent>
       </DialogProvider>
-      <div className="mt-5 grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-3 dark:*:data-[slot=card]:bg-card">
+      <div className="mt-3 grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-3 dark:*:data-[slot=card]:bg-card">
         <Card className="p-0 pb-5">
-          <div className="border-b px-10 py-3">
+          <div className="flex items-center gap-2 border-b px-10 py-3">
+            <TicketCheckIcon className="size-6 text-green-500" />
             <h3 className="font-semibold">Total Active Account</h3>
           </div>
           <div className="px-10">
@@ -75,7 +76,8 @@ export default async function ServicePage() {
           </div>
         </Card>
         <Card className="p-0 pb-5">
-          <div className="border-b px-10 py-3">
+          <div className="flex items-center gap-2 border-b px-10 py-3">
+            <TicketMinusIcon className="size-6 text-orange-600" />
             <h3 className="font-semibold">Expired Soon</h3>
           </div>
           <div className="px-10">
@@ -83,7 +85,8 @@ export default async function ServicePage() {
           </div>
         </Card>
         <Card className="p-0 pb-5">
-          <div className="border-b px-10 py-3">
+          <div className="flex items-center gap-2 border-b px-10 py-3">
+            <TicketXIcon className="size-6 text-red-500" />
             <h3 className="font-semibold">Expired Account</h3>
           </div>
           <div className="px-10">

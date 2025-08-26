@@ -3,11 +3,15 @@
 import { SearchIcon, XIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import type { FilterField } from '@/components/ui/data-table/data-table';
+import type { FilterField } from '@/components/ui/data-table/data-table.interface';
 import { DataTableFacetedFilter } from '@/components/ui/data-table/data-table-faceted-filter';
 import { useDataTable } from '@/components/ui/data-table/data-table-provider';
 import { Input } from '@/components/ui/input';
-import { SERVICE_ACCOUNT_PAYMENT, SERVICE_ACCOUNT_STATUS } from '@/types/service-account';
+import {
+  ACCOUNT_STATUS,
+  SERVICE_ACCOUNT_PAYMENT,
+  SERVICE_ACCOUNT_STATUS,
+} from '@/types/service-account';
 
 const filterFields: FilterField[] = [
   {
@@ -27,6 +31,15 @@ const filterFields: FilterField[] = [
       { label: SERVICE_ACCOUNT_STATUS.partial, value: SERVICE_ACCOUNT_STATUS.partial },
       { label: SERVICE_ACCOUNT_STATUS.full, value: SERVICE_ACCOUNT_STATUS.full },
       { label: SERVICE_ACCOUNT_STATUS.disabled, value: SERVICE_ACCOUNT_STATUS.disabled },
+    ],
+  },
+  {
+    column: 'accountStatus',
+    title: 'Account Status',
+    options: [
+      { label: ACCOUNT_STATUS.active, value: ACCOUNT_STATUS.active },
+      { label: ACCOUNT_STATUS.expired, value: ACCOUNT_STATUS.expired },
+      { label: ACCOUNT_STATUS.expiringSoon, value: ACCOUNT_STATUS.expiringSoon },
     ],
   },
 ];

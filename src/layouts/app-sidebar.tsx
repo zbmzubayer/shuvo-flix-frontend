@@ -23,7 +23,7 @@ import {
 } from '@/components/ui/sidebar';
 import { NavUser } from '@/layouts/nav-user';
 
-import Logo from '../../public/vercel.svg';
+import Logo from '../../public/logo.svg';
 
 // Menu items.
 const brand = {
@@ -74,8 +74,8 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarHeader>
         <SidebarMenuButton size="lg">
-          <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-neutral-700 text-primary-foreground">
-            <Image alt="Shuvo Flix Logo" className="size-4" src={brand.logo} />
+          <div className="flex aspect-square size-8 items-center justify-center">
+            <Image alt="Shuvo Flix Logo" className="size-full rounded-md" src={brand.logo} />
           </div>
           <span className="truncate font-medium">{brand.name}</span>
         </SidebarMenuButton>

@@ -4,9 +4,9 @@ import { CreateCustomerForm } from '@/components/customer/create-customer-form';
 import { customerTableColumns } from '@/components/customer/customer-table-columns';
 import { CustomerDataTableToolbar } from '@/components/customer/customer-table-toolbar';
 import { Button } from '@/components/ui/button';
+import { DataTable } from '@/components/ui/data-table';
 import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination';
 import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
-import { DataTable2 } from '@/components/ui/data-table/data-table2';
 import {
   DialogContent,
   DialogDescription,
@@ -48,7 +48,7 @@ export default async function CustomerPage() {
               </DialogContent>
             </DialogProvider>
           </div>
-          <DataTable2 />
+          <DataTable />
           <DataTablePagination />
         </DataTableProvider>
       </div>

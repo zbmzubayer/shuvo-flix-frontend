@@ -15,8 +15,8 @@ import { invalidateCache } from '@/actions/cache.action';
 import { EditServiceAccountForm } from '@/components/service-account/edit-service-account-form';
 import { serviceAccountOrderColumns } from '@/components/service-account/service-account-order-columns';
 import { Button } from '@/components/ui/button';
+import { DataTable } from '@/components/ui/data-table';
 import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
-import { DataTable2 } from '@/components/ui/data-table/data-table2';
 import {
   Dialog,
   DialogContent,
@@ -128,7 +128,7 @@ function ServiceAccountOrdersTable({ accountId }: { accountId: number }) {
     </div>
   ) : (
     <DataTableProvider columns={serviceAccountOrderColumns} data={data?.orders || []}>
-      <DataTable2 />
+      <DataTable />
     </DataTableProvider>
   );
 }
