@@ -71,7 +71,7 @@ export function NavUser() {
                 onClick={async () => await signOut({ callbackUrl: '/' })}
                 type="button"
               >
-                <LogOut />
+                <LogOut className="text-destructive" />
                 Log out
               </button>
             </DropdownMenuItem>

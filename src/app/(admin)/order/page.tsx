@@ -1,4 +1,5 @@
 import { PlusIcon } from 'lucide-react';
+import type { Metadata } from 'next';
 
 import { CreateOrderForm } from '@/components/order/create-order-form';
 import { orderTableColumns } from '@/components/order/order-table-columns';
@@ -21,6 +22,10 @@ import { getAllOrders } from '@/services/order.service';
 import { getAllProviders } from '@/services/provider.service';
 import { ORDER_STATUS } from '@/types/order';
 import { ACCOUNT_STATUS } from '@/types/service-account';
+
+export const metadata: Metadata = {
+  title: 'Order',
+};
 
 export default async function OrderPage() {
   const [orders, providers] = await Promise.all([getAllOrders(), getAllProviders()]);

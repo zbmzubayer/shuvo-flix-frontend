@@ -1,4 +1,5 @@
 import { BadgeAlertIcon, BadgeCheckIcon, ListCheckIcon, ListXIcon, PlusIcon } from 'lucide-react';
+import type { Metadata } from 'next';
 
 import { CreateServiceAccountForm } from '@/components/service-account/create-service-account-form';
 import { serviceAccountTableColumns } from '@/components/service-account/service-account-table-columns';
@@ -52,6 +53,10 @@ const calculateAccountStats = (accounts: ServiceAccount[]) => {
     totalUnsoldSharedSlots,
     expiredAccounts,
   };
+};
+
+export const metadata: Metadata = {
+  title: 'Service Account',
 };
 
 export default async function ServiceAccountPage({ params }: { params: Promise<{ id: string }> }) {
@@ -111,7 +116,7 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
     <div>
       <AppHeader title={`Accounts - ${service.name}`} />
 
-      <div className="mt-5 grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-4 dark:*:data-[slot=card]:bg-card">
+      <div className="grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-4 dark:*:data-[slot=card]:bg-card">
         <Card className="gap-2 p-0 pb-2">
           <div className="flex items-center justify-center gap-2 border-b py-2">
             <BadgeCheckIcon className="size-5 text-green-500" />
@@ -165,7 +170,6 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
           <p className="text-center font-bold text-2xl tabular-nums">{expiredAccounts}</p>
         </Card>
       </div>
-
       <div className="mt-5 space-y-2">
         <DataTableProvider columns={serviceAccountTableColumns} data={accounts}>
           <div className="flex items-center justify-between">

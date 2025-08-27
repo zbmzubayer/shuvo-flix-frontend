@@ -1,8 +1,13 @@
 import { ContactIcon, NotebookPenIcon } from 'lucide-react';
+import type { Metadata } from 'next';
 
 import { Card } from '@/components/ui/card';
 import { AppHeader } from '@/layouts/app-header';
 import { getDashboardData } from '@/services/dashboard.service';
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+};
 
 export default async function DashboardPage() {
   const dashboardData = await getDashboardData();

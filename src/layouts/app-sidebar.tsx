@@ -7,7 +7,6 @@ import {
   RadioIcon,
 } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 
 import {
   Sidebar,
@@ -17,11 +16,12 @@ import {
   SidebarGroupContent,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { NavUser } from '@/layouts/nav-user';
+import { SidebarMenuButtonActive } from '@/layouts/sidebar-menu-button-active';
 
 import Logo from '../../public/logo.svg';
 
@@ -73,12 +73,13 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
-        <SidebarMenuButton size="lg">
+        <div className="flex items-center gap-2">
           <div className="flex aspect-square size-8 items-center justify-center">
             <Image alt="Shuvo Flix Logo" className="size-full rounded-md" src={brand.logo} />
           </div>
           <span className="truncate font-medium">{brand.name}</span>
-        </SidebarMenuButton>
+          <SidebarTrigger className="ml-auto sm:hidden" />
+        </div>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
@@ -86,12 +87,13 @@ export function AppSidebar() {
             <SidebarMenu className="gap-2">
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild tooltip={item.title}>
+                  {/* <SidebarMenuButton asChild tooltip={item.title}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
-                  </SidebarMenuButton>
+                  </SidebarMenuButton> */}
+                  <SidebarMenuButtonActive icon={<item.icon />} title={item.title} url={item.url} />
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

@@ -1,4 +1,5 @@
 import { PlusIcon, TicketCheckIcon, TicketMinusIcon, TicketXIcon } from 'lucide-react';
+import type { Metadata } from 'next';
 
 import { CreateServiceForm } from '@/components/service/create-service-form';
 import { ServiceCard } from '@/components/service/service-card';
@@ -14,6 +15,10 @@ import {
 import { AppHeader } from '@/layouts/app-header';
 import { getAllServices } from '@/services/service.service';
 import { SERVICE_ACCOUNT_STATUS, type ServiceAccount } from '@/types/service-account';
+
+export const metadata: Metadata = {
+  title: 'Service',
+};
 
 export default async function ServicePage() {
   const services = await getAllServices();

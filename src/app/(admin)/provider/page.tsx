@@ -1,4 +1,5 @@
 import { PlusIcon } from 'lucide-react';
+import type { Metadata } from 'next';
 
 import { CreateProviderForm } from '@/components/provider/create-provider-form';
 import { providerTableColumns } from '@/components/provider/provider-table-columns';
@@ -15,6 +16,10 @@ import {
 } from '@/components/ui/dialog';
 import { AppHeader } from '@/layouts/app-header';
 import { getAllProviders } from '@/services/provider.service';
+
+export const metadata: Metadata = {
+  title: 'Provider',
+};
 
 export default async function ProviderPage() {
   const providers = await getAllProviders();

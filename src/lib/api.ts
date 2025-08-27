@@ -1,3 +1,4 @@
+import { getNextAuthToken } from "@/actions/cookie.action";
 import { ENV_CLIENT } from "@/config/env-client";
 
 /**
@@ -23,7 +24,10 @@ export async function fetchApi<T>(
 ): Promise<T> {
   try {
     // Don't set Content-Type for FormData requests - let the browser handle it
-    const defaultHeaders: HeadersInit = {};
+    const { token } = await getNextAuthToken();
+    const defaultHeaders: HeadersInit = {
+      Authorization: `Bearer ${token?.value}`,
+    };
 
     // Only set Content-Type to application/json if we're not sending FormData
     if (!(options?.body instanceof FormData)) {

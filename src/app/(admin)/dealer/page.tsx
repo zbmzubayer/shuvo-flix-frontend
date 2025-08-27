@@ -1,4 +1,5 @@
 import { PlusIcon } from 'lucide-react';
+import type { Metadata } from 'next';
 
 import { CreateDealerForm } from '@/components/dealer/create-dealer-form';
 import { dealerTableColumns } from '@/components/dealer/dealer-table-columns';
@@ -15,6 +16,10 @@ import {
 } from '@/components/ui/dialog';
 import { AppHeader } from '@/layouts/app-header';
 import { getAllDealers } from '@/services/dealer.service';
+
+export const metadata: Metadata = {
+  title: 'Dealer',
+};
 
 export default async function DealerPage() {
   const dealers = await getAllDealers();

@@ -1,6 +1,6 @@
 'use client';
 
-import { addDays, addMonths, addYears, subDays, subMonths, subYears } from 'date-fns';
+import { addMonths, addWeeks, addYears, subMonths, subWeeks, subYears } from 'date-fns';
 import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
 import type { DateRange } from 'react-day-picker';
@@ -39,8 +39,8 @@ const today = new Date();
 const dateRanges = {
   next: [
     { label: 'Today', range: { from: today, to: today } },
-    { label: 'Next 7 days', range: { from: today, to: addDays(today, 6) } },
-    { label: 'Next 30 days', range: { from: today, to: addDays(today, 30) } },
+    { label: 'Next week', range: { from: today, to: addWeeks(today, 1) } },
+    // { label: 'Next 30 days', range: { from: today, to: addDays(today, 30) } },
     { label: 'Next month', range: { from: today, to: addMonths(today, 1) } },
     { label: 'Next 3 months', range: { from: today, to: addMonths(today, 3) } },
     { label: 'Next 6 months', range: { from: today, to: addMonths(today, 6) } },
@@ -48,8 +48,8 @@ const dateRanges = {
   ],
   previous: [
     { label: 'Today', range: { from: today, to: today } },
-    { label: 'Last 7 days', range: { from: subDays(today, 6), to: today } },
-    { label: 'Last 30 days', range: { from: subDays(today, 30), to: today } },
+    { label: 'Last week', range: { from: subWeeks(today, 1), to: today } },
+    // { label: 'Last 30 days', range: { from: subDays(today, 30), to: today } },
     { label: 'Last month', range: { from: subMonths(today, 1), to: today } },
     { label: 'Last 3 months', range: { from: subMonths(today, 3), to: today } },
     { label: 'Last 6 months', range: { from: subMonths(today, 6), to: today } },
