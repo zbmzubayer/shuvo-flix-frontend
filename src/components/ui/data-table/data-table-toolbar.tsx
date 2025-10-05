@@ -2,7 +2,7 @@ import type { Table } from '@tanstack/react-table';
 import { XIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import type { FilterField } from '@/components/ui/data-table/data-table';
+import type { FilterField } from '@/components/ui/data-table/data-table.interface';
 import { DataTableFacetedFilter } from '@/components/ui/data-table/data-table-faceted-filter';
 import { Input } from '@/components/ui/input';
 
