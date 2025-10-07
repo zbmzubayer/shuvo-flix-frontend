@@ -26,12 +26,16 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { getAllDealers } from '@/services/dealer.service';
-import { getAllServices, SERVICE_CACHE_KEY } from '@/services/service.service';
+import { fetchApi } from '@/lib/api';
+import { getQueryClient } from '@/lib/get-query-client';
+import { DEALER_CACHE_KEY } from '@/services/dealer.service';
+import { SERVICE_CACHE_KEY } from '@/services/service.service';
 import {
   SERVICE_ACCOUNT_CACHE_KEY,
   updateServiceAccount,
 } from '@/services/service-account.service';
+import type { Dealer } from '@/types/dealer';
+import type { ServiceWithServiceAccount } from '@/types/service';
 import { SERVICE_ACCOUNT_PAYMENT, type ServiceAccount } from '@/types/service-account';
 import { type ServiceAccountDto, serviceAccountSchema } from '@/validations/service-account.dto';
 
@@ -41,10 +45,17 @@ interface Props {
 }
 
 export function EditServiceAccountForm({ account, setOpen }: Props) {
+  const queryClient = getQueryClient();
   const [{ data: services }, { data: dealers }] = useQueries({
     queries: [
-      { queryKey: ['services'], queryFn: getAllServices },
-      { queryKey: ['dealers'], queryFn: getAllDealers },
+      {
+        queryKey: [SERVICE_CACHE_KEY],
+        queryFn: () => fetchApi<ServiceWithServiceAccount[]>('/service', { method: 'GET' }),
+      },
+      {
+        queryKey: [DEALER_CACHE_KEY],
+        queryFn: () => fetchApi<Dealer[]>('/dealer', { method: 'GET' }),
+      },
     ],
   });
 
@@ -69,6 +80,7 @@ export function EditServiceAccountForm({ account, setOpen }: Props) {
     mutationFn: updateServiceAccount,
     onSuccess: () => {
       invalidateCaches([SERVICE_ACCOUNT_CACHE_KEY, SERVICE_CACHE_KEY]);
+      queryClient.invalidateQueries({ queryKey: [SERVICE_CACHE_KEY] });
       setOpen(false);
       toast.success('Account updated successfully');
     },

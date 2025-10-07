@@ -27,21 +27,32 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
-import { getAllDealers } from '@/services/dealer.service';
-import { getAllServices, SERVICE_CACHE_KEY } from '@/services/service.service';
+import { fetchApi } from '@/lib/api';
+import { getQueryClient } from '@/lib/get-query-client';
+import { DEALER_CACHE_KEY } from '@/services/dealer.service';
+import { SERVICE_CACHE_KEY } from '@/services/service.service';
 import {
   createServiceAccount,
   SERVICE_ACCOUNT_CACHE_KEY,
 } from '@/services/service-account.service';
+import type { Dealer } from '@/types/dealer';
+import type { ServiceWithServiceAccount } from '@/types/service';
 import { SERVICE_ACCOUNT_PAYMENT } from '@/types/service-account';
 import { type ServiceAccountDto, serviceAccountSchema } from '@/validations/service-account.dto';
 
 export function CreateServiceAccountForm() {
+  const queryClient = getQueryClient();
   const { setOpen } = useDialog();
   const [{ data: services }, { data: dealers }] = useQueries({
     queries: [
-      { queryKey: ['services'], queryFn: getAllServices },
-      { queryKey: ['dealers'], queryFn: getAllDealers },
+      {
+        queryKey: [SERVICE_CACHE_KEY],
+        queryFn: () => fetchApi<ServiceWithServiceAccount[]>('/service', { method: 'GET' }),
+      },
+      {
+        queryKey: [DEALER_CACHE_KEY],
+        queryFn: () => fetchApi<Dealer[]>('/dealer', { method: 'GET' }),
+      },
     ],
   });
 
@@ -58,7 +69,9 @@ export function CreateServiceAccountForm() {
     mutationFn: createServiceAccount,
     onSuccess: () => {
       invalidateCaches([SERVICE_ACCOUNT_CACHE_KEY, SERVICE_CACHE_KEY]);
+      queryClient.invalidateQueries({ queryKey: [SERVICE_CACHE_KEY] });
       toast.success('Account created successfully');
+      setOpen(false);
     },
     onError: (error) => {
       toast.error('Failed to create account', {
@@ -68,7 +81,6 @@ export function CreateServiceAccountForm() {
   });
 
   const onSubmit = async (values: ServiceAccountDto) => {
-    setOpen(false);
     await mutateAsync(values);
   };
 

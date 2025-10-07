@@ -38,24 +38,36 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
+import { fetchApi } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { CUSTOMER_CACHE_KEY, getAllCustomers } from '@/services/customer.service';
+import { CUSTOMER_CACHE_KEY } from '@/services/customer.service';
 import { createOrder, ORDER_CACHE_KEY } from '@/services/order.service';
-import { getAllProviders } from '@/services/provider.service';
-import { getAllServices, SERVICE_CACHE_KEY } from '@/services/service.service';
-import { CUSTOMER_SOCIAL } from '@/types/customer';
+import { PROVIDER_CACHE_KEY } from '@/services/provider.service';
+import { SERVICE_CACHE_KEY } from '@/services/service.service';
+import { CUSTOMER_SOCIAL, type CustomerDetails } from '@/types/customer';
 import { ORDER_ACCOUNT_TYPE, ORDER_STATUS } from '@/types/order';
+import type { Provider } from '@/types/provider';
+import type { ServiceWithServiceAccount } from '@/types/service';
 import { type OrderFormDto, orderFormSchema } from '@/validations/order.dto';
 
 export function CreateOrderForm() {
   const [popOverOpen, setPopOverOpen] = useState(false);
   const { setOpen } = useDialog();
   const [selectedServiceIndex, setSelectedServiceIndex] = useState<number>(0);
-  const [{ data: services }, { data: providers }, { data: customers }] = useQueries({
+  const [{ data: customers }, { data: services }, { data: providers }] = useQueries({
     queries: [
-      { queryKey: ['services'], queryFn: getAllServices },
-      { queryKey: ['providers'], queryFn: getAllProviders },
-      { queryKey: ['customers'], queryFn: getAllCustomers },
+      {
+        queryKey: [CUSTOMER_CACHE_KEY],
+        queryFn: () => fetchApi<CustomerDetails[]>('/customer', { method: 'GET' }),
+      },
+      {
+        queryKey: [SERVICE_CACHE_KEY],
+        queryFn: () => fetchApi<ServiceWithServiceAccount[]>('/service', { method: 'GET' }),
+      },
+      {
+        queryKey: [PROVIDER_CACHE_KEY],
+        queryFn: () => fetchApi<Provider[]>('/provider', { method: 'GET' }),
+      },
     ],
   });
 

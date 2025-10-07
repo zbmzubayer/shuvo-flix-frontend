@@ -20,12 +20,15 @@ import {
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { useFileUpload } from '@/hooks/use-file-upload';
+import { getQueryClient } from '@/lib/get-query-client';
 import { uploadFile } from '@/services/file.service';
 import { PROVIDER_CACHE_KEY, updateProvider } from '@/services/provider.service';
 import type { Provider } from '@/types/provider';
 import { type ProviderDto, providerSchema } from '@/validations/provider.dto';
 
 export function EditProviderForm({ provider }: { provider: Provider }) {
+  const queryClient = getQueryClient();
+
   const { setOpen } = useDialog();
   const [{ files }, { removeFile, openFileDialog, getInputProps }] = useFileUpload({
     accept: 'image/*',
@@ -46,6 +49,7 @@ export function EditProviderForm({ provider }: { provider: Provider }) {
     mutationFn: updateProvider,
     onSuccess: () => {
       invalidateCache(PROVIDER_CACHE_KEY);
+      queryClient.invalidateQueries({ queryKey: [PROVIDER_CACHE_KEY] });
       toast.success('Provider updated successfully');
       setOpen(false);
     },

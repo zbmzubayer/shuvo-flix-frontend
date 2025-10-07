@@ -37,13 +37,16 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Textarea } from '@/components/ui/textarea';
+import { fetchApi } from '@/lib/api';
 import { cn } from '@/lib/utils';
-import { CUSTOMER_CACHE_KEY, getAllCustomers } from '@/services/customer.service';
+import { CUSTOMER_CACHE_KEY } from '@/services/customer.service';
 import { ORDER_CACHE_KEY, updateOrder } from '@/services/order.service';
-import { getAllProviders } from '@/services/provider.service';
-import { getAllServices, SERVICE_CACHE_KEY } from '@/services/service.service';
-import { CUSTOMER_SOCIAL } from '@/types/customer';
+import { PROVIDER_CACHE_KEY } from '@/services/provider.service';
+import { SERVICE_CACHE_KEY } from '@/services/service.service';
+import { CUSTOMER_SOCIAL, type CustomerDetails } from '@/types/customer';
 import { ORDER_ACCOUNT_TYPE, ORDER_STATUS, type OrderDetails } from '@/types/order';
+import type { Provider } from '@/types/provider';
+import type { ServiceWithServiceAccount } from '@/types/service';
 import { type OrderFormDto, orderFormSchema } from '@/validations/order.dto';
 
 interface EditOrderFormProps {
@@ -55,9 +58,18 @@ export function EditOrderForm({ order, setOpen }: EditOrderFormProps) {
   const [popOverOpen, setPopOverOpen] = useState(false);
   const [{ data: customers }, { data: services }, { data: providers }] = useQueries({
     queries: [
-      { queryKey: ['customers'], queryFn: getAllCustomers },
-      { queryKey: ['services'], queryFn: getAllServices },
-      { queryKey: ['providers'], queryFn: getAllProviders },
+      {
+        queryKey: [CUSTOMER_CACHE_KEY],
+        queryFn: () => fetchApi<CustomerDetails[]>('/customer', { method: 'GET' }),
+      },
+      {
+        queryKey: [SERVICE_CACHE_KEY],
+        queryFn: () => fetchApi<ServiceWithServiceAccount[]>('/service', { method: 'GET' }),
+      },
+      {
+        queryKey: [PROVIDER_CACHE_KEY],
+        queryFn: () => fetchApi<Provider[]>('/provider', { method: 'GET' }),
+      },
     ],
   });
 

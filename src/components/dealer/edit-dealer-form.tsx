@@ -20,12 +20,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { useFileUpload } from '@/hooks/use-file-upload';
+import { getQueryClient } from '@/lib/get-query-client';
 import { DEALER_CACHE_KEY, updateDealer } from '@/services/dealer.service';
 import { uploadFile } from '@/services/file.service';
 import type { Dealer } from '@/types/dealer';
 import { type DealerDto, dealerSchema } from '@/validations/dealer.dto';
 
 export function EditDealerForm({ dealer }: { dealer: Dealer }) {
+  const queryClient = getQueryClient();
   const { setOpen } = useDialog();
   const [{ files }, { removeFile, openFileDialog, getInputProps }] = useFileUpload({
     accept: 'image/*',
@@ -46,6 +48,7 @@ export function EditDealerForm({ dealer }: { dealer: Dealer }) {
     mutationFn: updateDealer,
     onSuccess: () => {
       invalidateCache(DEALER_CACHE_KEY);
+      queryClient.invalidateQueries({ queryKey: [DEALER_CACHE_KEY] });
       toast.success('Dealer updated successfully');
       setOpen(false);
     },
