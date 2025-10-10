@@ -2,6 +2,7 @@ import { BadgeAlertIcon, BadgeCheckIcon, ListCheckIcon, ListXIcon, PlusIcon } fr
 import type { Metadata } from 'next';
 
 import { CreateServiceAccountForm } from '@/components/service-account/create-service-account-form';
+import { ServiceAccountExportExcel } from '@/components/service-account/service-account-export-excel';
 import { serviceAccountTableColumns } from '@/components/service-account/service-account-table-columns';
 import { ServiceAccountDataTableToolbar } from '@/components/service-account/service-account-table-toolbar';
 import { Button } from '@/components/ui/button';
@@ -175,6 +176,7 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
         <DataTableProvider columns={serviceAccountTableColumns} data={accounts}>
           <div className="flex items-center justify-between">
             <ServiceAccountDataTableToolbar filterFields={filterFields} />
+            <ServiceAccountExportExcel fileName={service.name} serviceAccounts={accounts} />
             <DialogProvider>
               <DialogProviderTrigger asChild>
                 <Button size="sm">
