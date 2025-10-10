@@ -20,6 +20,7 @@ import {
 import { AppHeader } from '@/layouts/app-header';
 import { getAllOrders } from '@/services/order.service';
 import { getAllProviders } from '@/services/provider.service';
+import { getAllServices } from '@/services/service.service';
 import { ORDER_STATUS } from '@/types/order';
 import { ACCOUNT_STATUS } from '@/types/service-account';
 
@@ -28,7 +29,11 @@ export const metadata: Metadata = {
 };
 
 export default async function OrderPage() {
-  const [orders, providers] = await Promise.all([getAllOrders(), getAllProviders()]);
+  const [orders, services, providers] = await Promise.all([
+    getAllOrders(),
+    getAllServices(),
+    getAllProviders(),
+  ]);
 
   const filterFields: FilterField[] = [
     {
@@ -48,6 +53,14 @@ export default async function OrderPage() {
         { label: ACCOUNT_STATUS.expired, value: ACCOUNT_STATUS.expired },
         { label: ACCOUNT_STATUS.expiringSoon, value: ACCOUNT_STATUS.expiringSoon },
       ],
+    },
+    {
+      column: 'serviceId',
+      title: 'Service',
+      options: services.map((service) => ({
+        label: service.name,
+        value: service.id,
+      })),
     },
     {
       column: 'providerId',
