@@ -1,16 +1,22 @@
-import { PlusIcon, TicketCheckIcon, TicketMinusIcon, TicketXIcon } from 'lucide-react';
+import { EyeIcon, PlusIcon, TicketCheckIcon, TicketMinusIcon, TicketXIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 
 import { CreateServiceForm } from '@/components/service/create-service-form';
 import { ServiceCard } from '@/components/service/service-card';
+import { serviceAccountExpiredTableColumns } from '@/components/service-account/service-account-expired-columns';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { DataTable } from '@/components/ui/data-table';
+import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
 import {
+  Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogProvider,
   DialogProviderTrigger,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { AppHeader } from '@/layouts/app-header';
 import { getAllServices } from '@/services/service.service';
@@ -23,35 +29,37 @@ export const metadata: Metadata = {
 export default async function ServicePage() {
   const services = await getAllServices();
 
-  const totalActiveAccounts = services.reduce((acc, service) => {
-    const active = service.serviceAccounts.find(
-      (account) => account.status !== SERVICE_ACCOUNT_STATUS.disabled
-    );
-    if (active) {
-      acc.push(active);
-    }
-    return acc;
-  }, [] as ServiceAccount[]);
+  // TODO Need tp optimize this three functions
+  const { totalActiveAccounts, expiredSoonAccounts, expiredAccounts } = services.reduce(
+    (acc, service) => {
+      for (const account of service.serviceAccounts) {
+        if (account.status !== SERVICE_ACCOUNT_STATUS.disabled) {
+          acc.totalActiveAccounts.push(account);
+        }
 
-  const expiredSoonAccounts = services.reduce((acc, service) => {
-    const soonExpired = service.serviceAccounts.find(
-      (account) => new Date(account.expiryDate) < new Date(Date.now() + 2 * 24 * 60 * 60 * 1000) // within two days
-    );
-    if (soonExpired) {
-      acc.push(soonExpired);
-    }
-    return acc;
-  }, [] as ServiceAccount[]);
+        const expiryDate = new Date(new Date(account.expiryDate).setHours(23, 59, 59, 999));
+        const currentDate = new Date();
 
-  const expiredAccounts = services.reduce((acc, service) => {
-    const expired = service.serviceAccounts.find(
-      (account) => new Date(account.expiryDate) < new Date()
-    );
-    if (expired) {
-      acc.push(expired);
+        if (expiryDate < currentDate) {
+          acc.expiredAccounts.push(account);
+        } else {
+          const soonThreshold = new Date();
+          soonThreshold.setDate(currentDate.getDate() + 2);
+          soonThreshold.setHours(23, 59, 59, 999);
+
+          if (new Date() < expiryDate && expiryDate <= soonThreshold) {
+            acc.expiredSoonAccounts.push(account);
+          }
+        }
+      }
+      return acc;
+    },
+    {
+      totalActiveAccounts: [] as ServiceAccount[],
+      expiredSoonAccounts: [] as ServiceAccount[],
+      expiredAccounts: [] as ServiceAccount[],
     }
-    return acc;
-  }, [] as ServiceAccount[]);
+  );
 
   return (
     <div>
@@ -93,6 +101,28 @@ export default async function ServicePage() {
           <div className="flex items-center gap-2 border-b px-10 py-3">
             <TicketXIcon className="size-6 text-red-500" />
             <h3 className="font-semibold">Expired Account</h3>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="ml-auto" size="sm" variant="outline">
+                  <EyeIcon />
+                  View
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-7xl">
+                <div className="overflow-y-auto p-6">
+                  <DialogHeader className="mb-2">
+                    <DialogTitle>Expired Accounts</DialogTitle>
+                    <DialogDescription>The following accounts have expired:</DialogDescription>
+                  </DialogHeader>
+                  <DataTableProvider
+                    columns={serviceAccountExpiredTableColumns}
+                    data={expiredAccounts}
+                  >
+                    <DataTable />
+                  </DataTableProvider>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
           <div className="px-10">
             <p className="font-bold text-2xl tabular-nums">{expiredAccounts.length}</p>
