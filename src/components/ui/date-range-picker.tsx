@@ -10,7 +10,6 @@ import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
 
-const today = new Date();
 // const next7Days = {
 //   from: today,
 //   to: addDays(today, 6),
@@ -36,29 +35,8 @@ const today = new Date();
 //   to: addYears(today, 1),
 // };
 
-const dateRanges = {
-  next: [
-    { label: 'Today', range: { from: today, to: today } },
-    { label: 'Next week', range: { from: today, to: addWeeks(today, 1) } },
-    // { label: 'Next 30 days', range: { from: today, to: addDays(today, 30) } },
-    { label: 'Next month', range: { from: today, to: addMonths(today, 1) } },
-    { label: 'Next 3 months', range: { from: today, to: addMonths(today, 3) } },
-    { label: 'Next 6 months', range: { from: today, to: addMonths(today, 6) } },
-    { label: 'Next year', range: { from: today, to: addYears(today, 1) } },
-  ],
-  previous: [
-    { label: 'Today', range: { from: today, to: today } },
-    { label: 'Last week', range: { from: subWeeks(today, 1), to: today } },
-    // { label: 'Last 30 days', range: { from: subDays(today, 30), to: today } },
-    { label: 'Last month', range: { from: subMonths(today, 1), to: today } },
-    { label: 'Last 3 months', range: { from: subMonths(today, 3), to: today } },
-    { label: 'Last 6 months', range: { from: subMonths(today, 6), to: today } },
-    { label: 'Last year', range: { from: subYears(today, 1), to: today } },
-  ],
-} as const;
-
 interface DatePickerProps {
-  rangeType?: keyof typeof dateRanges;
+  rangeType?: 'next' | 'previous';
   className?: string;
   value?: DateRange;
   onChange: (date?: DateRange) => void;
@@ -70,6 +48,29 @@ export function DateRangePicker({
   value,
   onChange,
 }: DatePickerProps) {
+  const today = new Date();
+
+  const dateRanges = {
+    next: [
+      { label: 'Today', range: { from: today, to: today } },
+      { label: 'Next week', range: { from: today, to: addWeeks(today, 1) } },
+      // { label: 'Next 30 days', range: { from: today, to: addDays(today, 30) } },
+      { label: 'Next month', range: { from: today, to: addMonths(today, 1) } },
+      { label: 'Next 3 months', range: { from: today, to: addMonths(today, 3) } },
+      { label: 'Next 6 months', range: { from: today, to: addMonths(today, 6) } },
+      { label: 'Next year', range: { from: today, to: addYears(today, 1) } },
+    ],
+    previous: [
+      { label: 'Today', range: { from: today, to: today } },
+      { label: 'Last week', range: { from: subWeeks(today, 1), to: today } },
+      // { label: 'Last 30 days', range: { from: subDays(today, 30), to: today } },
+      { label: 'Last month', range: { from: subMonths(today, 1), to: today } },
+      { label: 'Last 3 months', range: { from: subMonths(today, 3), to: today } },
+      { label: 'Last 6 months', range: { from: subMonths(today, 6), to: today } },
+      { label: 'Last year', range: { from: subYears(today, 1), to: today } },
+    ],
+  } as const;
+
   const [month, setMonth] = useState(today);
 
   return (
