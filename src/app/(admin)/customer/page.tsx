@@ -1,6 +1,7 @@
 import { PlusIcon } from 'lucide-react';
 
 import { CreateCustomerForm } from '@/components/customer/create-customer-form';
+import { CustomerExportExcel } from '@/components/customer/customer-export-excel';
 import { customerTableColumns } from '@/components/customer/customer-table-columns';
 import { CustomerDataTableToolbar } from '@/components/customer/customer-table-toolbar';
 import { Button } from '@/components/ui/button';
@@ -28,6 +29,7 @@ export default async function CustomerPage() {
         <DataTableProvider columns={customerTableColumns} data={customers}>
           <div className="flex items-center justify-between">
             <CustomerDataTableToolbar />
+            <CustomerExportExcel customers={customers} />
             <DialogProvider>
               <DialogProviderTrigger asChild>
                 <Button size="sm">
