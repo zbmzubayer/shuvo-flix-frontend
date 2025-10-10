@@ -2,6 +2,7 @@
 
 import type { ColumnDef, FilterFn } from '@tanstack/react-table';
 import { formatDistanceToNowStrict } from 'date-fns';
+import Image from 'next/image';
 import type { DateRange } from 'react-day-picker';
 
 import { OrderDropdown } from '@/components/order/order-dropdown';
@@ -53,7 +54,7 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
     accessorKey: 'endDate',
     header: 'End Date',
     cell: ({ row }) =>
-      `${new Date(row.original.endDate).toLocaleDateString()} (${formatDistanceToNowStrict(new Date(row.original.endDate))})`,
+      `${new Date(row.original.endDate).toLocaleDateString()} (${formatDistanceToNowStrict(new Date(row.original.endDate).setHours(23, 59, 59, 999))})`,
   },
   // {
   //   accessorKey: 'leftDays',
@@ -68,7 +69,13 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
     filterFn: (row, _columnId, filterValue: DateRange) => {
       const createdAt = new Date(row.original.createdAt);
       if (!(filterValue.from && filterValue.to)) return true;
-      return createdAt >= filterValue.from && createdAt <= filterValue.to;
+
+      const from = new Date(filterValue.from);
+      from.setHours(0, 0, 0, 0);
+      const to = new Date(filterValue.to);
+      to.setHours(23, 59, 59, 999);
+
+      return createdAt >= from && createdAt <= to;
     },
   },
   {
@@ -79,9 +86,26 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
     filterFn: (row, columnId, filterValue) => filterValue.includes(row.getValue(columnId)),
   },
   {
-    accessorKey: 'serviceAccount.name',
+    accessorKey: 'serviceId',
     header: 'Service Account',
-    cell: ({ row }) => `${row.original.serviceAccount.name} (${row.original.accountType})`,
+    cell: ({ row }) => (
+      <span className="flex items-center">
+        <Image
+          alt={row.original.service.name}
+          className="me-1 inline aspect-square size-7 rounded border p-px"
+          height={24}
+          src={row.original.service.logo}
+          width={24}
+        />
+        <span>
+          {row.original.serviceAccount.name}{' '}
+          <span className="font-medium text-muted-foreground text-xs">
+            ({row.original.accountType})
+          </span>
+        </span>
+      </span>
+    ),
+    filterFn: (row, columnId, filterValue) => filterValue.includes(row.getValue(columnId)),
     enableSorting: false,
   },
   {
@@ -89,7 +113,9 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
     header: 'Acc Status',
     accessorFn: (row): AccountStatus => {
       const today = new Date();
+      // set end date to last millisecond of the day
       const endDate = new Date(row.endDate);
+      endDate.setHours(23, 59, 59, 999);
       if (endDate < today) return ACCOUNT_STATUS.expired;
       today.setDate(today.getDate() + 2);
       if (endDate < today) return ACCOUNT_STATUS.expiringSoon;

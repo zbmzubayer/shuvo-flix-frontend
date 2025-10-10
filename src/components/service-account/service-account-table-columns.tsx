@@ -67,14 +67,14 @@ export const serviceAccountTableColumns: ColumnDef<ServiceAccountWithDealer>[] =
     accessorKey: 'expiryDate',
     header: 'Expiry Date',
     cell: ({ row }) =>
-      `${new Date(row.original.expiryDate).toLocaleDateString()} (${formatDistanceToNowStrict(new Date(row.original.expiryDate))})`,
+      `${new Date(row.original.expiryDate).toLocaleDateString()} (${formatDistanceToNowStrict(new Date(new Date(row.original.expiryDate).setHours(23, 59, 59, 999)), { addSuffix: true })})`,
   },
   {
     accessorKey: 'accountStatus',
     header: 'Acc Status',
     accessorFn: (row): AccountStatus => {
       const today = new Date();
-      const endDate = new Date(row.expiryDate);
+      const endDate = new Date(new Date(row.expiryDate).setHours(23, 59, 59, 999));
       if (endDate < today) return ACCOUNT_STATUS.expired;
       today.setDate(today.getDate() + 2);
       if (endDate < today) return ACCOUNT_STATUS.expiringSoon;
