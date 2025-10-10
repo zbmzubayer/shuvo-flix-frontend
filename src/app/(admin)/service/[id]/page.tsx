@@ -38,7 +38,8 @@ const calculateAccountStats = (accounts: ServiceAccount[]) => {
 
   accounts.forEach((account) => {
     if (account.status !== SERVICE_ACCOUNT_STATUS.disabled) totalActiveAccounts++;
-    if (account.expiryDate < new Date()) expiredAccounts++;
+    if (new Date(new Date(account.expiryDate).setHours(23, 59, 59, 999)) < new Date())
+      expiredAccounts++;
     totalSoldPersonalSlots += account.soldPersonalSlots;
     totalSoldSharedSlots += account.soldSharedSlots;
     totalUnsoldPersonalSlots += account.personalSlots - account.soldPersonalSlots;
