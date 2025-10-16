@@ -40,6 +40,7 @@ export function DatePicker({ value, onChange }: DatePickerProps) {
           }}
           components={{ DropdownNav, Dropdown }}
           defaultMonth={new Date()}
+          endMonth={new Date(new Date().getFullYear() + 10, 11)}
           hideNavigation
           mode="single"
           onSelect={(selectedDate) => {
