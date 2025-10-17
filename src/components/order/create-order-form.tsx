@@ -76,11 +76,9 @@ export function CreateOrderForm() {
     defaultValues: {
       customer: {
         name: '',
-        personalEmail: '',
         phone: '',
         socialLink: '',
       },
-      email: '',
     },
   });
 
@@ -226,14 +224,22 @@ export function CreateOrderForm() {
         <FormField
           control={form.control}
           name="customer.personalEmail"
-          render={({ field }) => (
+          render={({ field: { onChange, ...fieldProps } }) => (
             <FormItem>
               <div className="flex items-center justify-between">
                 <FormLabel>Personal Email</FormLabel>
                 <FormMessage />
               </div>
               <FormControl>
-                <Input placeholder="Enter customer personal email" type="email" {...field} />
+                <Input
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onChange(val === '' ? undefined : val);
+                  }}
+                  placeholder="Enter customer personal email"
+                  type="email"
+                  {...fieldProps}
+                />
               </FormControl>
             </FormItem>
           )}
@@ -241,14 +247,22 @@ export function CreateOrderForm() {
         <FormField
           control={form.control}
           name="email"
-          render={({ field }) => (
+          render={({ field: { onChange, ...fieldProps } }) => (
             <FormItem>
               <div className="flex items-center justify-between">
                 <FormLabel>Account Email</FormLabel>
                 <FormMessage />
               </div>
               <FormControl>
-                <Input placeholder="Enter customer account email" type="email" {...field} />
+                <Input
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    onChange(val === '' ? undefined : val);
+                  }}
+                  placeholder="Enter customer account email"
+                  type="email"
+                  {...fieldProps}
+                />
               </FormControl>
             </FormItem>
           )}
