@@ -5,7 +5,7 @@ import { customerSchema } from "@/validations/customer.dto";
 
 export const orderSchema = z.object({
   customer: customerSchema,
-  email: z.email("Invalid email"),
+  email: z.email("Invalid email").optional(),
   accountType: z.enum(ORDER_ACCOUNT_TYPE, "Required"),
   status: z.enum(ORDER_STATUS, "Required"),
   startDate: z.date("Required"),
