@@ -47,7 +47,9 @@ export function OrderDropdown({ order }: { order: OrderDetails }) {
           <div className="overflow-y-auto p-6">
             <DialogHeader className="mb-2">
               <DialogTitle>Edit Order</DialogTitle>
-              <DialogDescription>Edit the details for the order.</DialogDescription>
+              <DialogDescription className="tabular-nums">
+                Last updated: {new Date(order.updatedAt).toLocaleString()}
+              </DialogDescription>
             </DialogHeader>
             <EditOrderForm order={order} setOpen={setOpen} />
           </div>
