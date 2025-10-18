@@ -13,7 +13,7 @@ import { ACCOUNT_STATUS, type AccountStatus } from '@/types/service-account';
 
 const multiColumnFilterFn: FilterFn<OrderDetails> = (row, _columnId, filterValue) => {
   const searchableRowContent =
-    `${row.original.customer.name}${row.original.customer.phone}${row.original.email}`.toLowerCase();
+    `${row.original.customer.name}${row.original.customer.phone}${row.original.email}SF-${row.original.id.toString().padStart(6, '0')}`.toLowerCase();
   const searchTerm = (filterValue ?? '').toLowerCase();
   return searchableRowContent.includes(searchTerm);
 };
