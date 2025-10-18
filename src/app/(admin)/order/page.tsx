@@ -33,6 +33,8 @@ export default async function OrderPage() {
         { label: ORDER_STATUS.paid, value: ORDER_STATUS.paid },
         { label: ORDER_STATUS.due, value: ORDER_STATUS.due },
         { label: ORDER_STATUS.unpaid, value: ORDER_STATUS.unpaid },
+        { label: ORDER_STATUS.gift, value: ORDER_STATUS.gift },
+        { label: ORDER_STATUS.combo, value: ORDER_STATUS.combo },
       ],
     },
     {

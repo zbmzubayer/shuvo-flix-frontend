@@ -83,6 +83,7 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
       column: 'payment',
       title: 'Payment',
       options: [
+        { label: SERVICE_ACCOUNT_PAYMENT.pending, value: SERVICE_ACCOUNT_PAYMENT.pending },
         { label: SERVICE_ACCOUNT_PAYMENT.paid, value: SERVICE_ACCOUNT_PAYMENT.paid },
         { label: SERVICE_ACCOUNT_PAYMENT.due, value: SERVICE_ACCOUNT_PAYMENT.due },
         { label: SERVICE_ACCOUNT_PAYMENT.unpaid, value: SERVICE_ACCOUNT_PAYMENT.unpaid },
