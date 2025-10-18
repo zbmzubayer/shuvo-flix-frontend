@@ -56,6 +56,8 @@ interface EditOrderFormProps {
 
 export function EditOrderForm({ order, setOpen }: EditOrderFormProps) {
   const [popOverOpen, setPopOverOpen] = useState(false);
+  const [servicePopOverOpen, setServicePopOverOpen] = useState(false);
+  const [accountPopOverOpen, setAccountPopOverOpen] = useState(false);
   const [{ data: customers }, { data: services }, { data: providers }] = useQueries({
     queries: [
       {
@@ -78,12 +80,12 @@ export function EditOrderForm({ order, setOpen }: EditOrderFormProps) {
     defaultValues: {
       customer: {
         name: order.customer.name,
-        personalEmail: order.customer.personalEmail,
+        personalEmail: order.customer.personalEmail || undefined,
         phone: order.customer.phone,
         social: order.customer.social ?? undefined,
         socialLink: order.customer.socialLink ?? '',
       },
-      email: order.email,
+      email: order.email || undefined,
       serviceId: order.serviceId,
       serviceAccountId: order.serviceAccountId,
       providerId: order.providerId,
@@ -97,10 +99,12 @@ export function EditOrderForm({ order, setOpen }: EditOrderFormProps) {
     },
   });
 
-  const selectedService = useMemo(
-    () => services?.find((s) => s.id === form.watch('serviceId')),
-    [services, form.watch('serviceId')]
-  );
+  const selectedServiceId = form.getValues('serviceId');
+  const selectedService = useMemo(() => {
+    if (services && selectedServiceId) {
+      return services.find((s) => s.id === selectedServiceId);
+    }
+  }, [services, selectedServiceId]);
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: updateOrder,
@@ -154,7 +158,7 @@ export function EditOrderForm({ order, setOpen }: EditOrderFormProps) {
                     <ChevronsUpDownIcon className="opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-full p-0">
+                <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0">
                   <Command>
                     <CommandInput
                       onKeyDown={(e) => {
@@ -274,47 +278,106 @@ export function EditOrderForm({ order, setOpen }: EditOrderFormProps) {
                   <FormMessage />
                 </div>
                 <div className="flex items-center">
-                  <Select
-                    onValueChange={(value) => {
-                      form.setValue('serviceId', Number(value));
-                      field.onChange('');
-                    }}
-                    value={form.getValues('serviceId')?.toString() || ''}
-                  >
-                    <SelectTrigger className="w-2/5 rounded-r-none">
-                      <SelectValue placeholder="Service" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {services?.map((item) => (
-                        <SelectItem key={item.id} value={item.id.toString()}>
-                          {item.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select
-                    onValueChange={(value) => field.onChange(Number(value))}
-                    value={field.value?.toString() || ''}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full rounded-l-none">
-                        <SelectValue placeholder="Select an account" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {services?.length && selectedService?.serviceAccounts?.length ? (
-                        selectedService.serviceAccounts.map((item) => (
-                          <SelectItem key={item.id} value={item.id.toString()}>
-                            {item.name}
-                          </SelectItem>
-                        ))
-                      ) : (
-                        <p className="my-3 text-center text-muted-foreground text-sm">
-                          Accounts empty
-                        </p>
-                      )}
-                    </SelectContent>
-                  </Select>
+                  <Popover onOpenChange={setServicePopOverOpen} open={servicePopOverOpen}>
+                    <PopoverTrigger asChild className="w-2/5 rounded-r-none">
+                      {/** biome-ignore lint/a11y/useSemanticElements: <explanation> */}
+                      <Button
+                        aria-expanded={servicePopOverOpen}
+                        className="justify-between"
+                        role="combobox"
+                        variant="outline"
+                      >
+                        {selectedService?.name || 'Select Service'}
+                        <ChevronsUpDownIcon className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      align="start"
+                      className="w-[var(--radix-popover-trigger-width)] p-0"
+                    >
+                      <Command>
+                        <CommandInput placeholder="Search service..." />
+                        <CommandList>
+                          <CommandEmpty>No service found.</CommandEmpty>
+                          <CommandGroup>
+                            {services?.map((service) => (
+                              <CommandItem
+                                key={service.id}
+                                onSelect={() => {
+                                  form.setValue('serviceId', service.id);
+                                  // form.resetField('serviceAccountId');
+                                  field.onChange('');
+                                  setServicePopOverOpen(false);
+                                }}
+                                value={service.name}
+                              >
+                                {service.name}
+                                <CheckIcon
+                                  className={cn(
+                                    'ml-auto',
+                                    form.getValues('serviceId') === service.id
+                                      ? 'opacity-100'
+                                      : 'opacity-0'
+                                  )}
+                                />
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <Popover onOpenChange={setAccountPopOverOpen} open={accountPopOverOpen}>
+                    <PopoverTrigger asChild className="flex-1 rounded-l-none">
+                      {/** biome-ignore lint/a11y/useSemanticElements: <explanation> */}
+                      <Button
+                        aria-expanded={accountPopOverOpen}
+                        className="justify-between"
+                        role="combobox"
+                        variant="outline"
+                      >
+                        {selectedService?.serviceAccounts.find(
+                          (account) => account.id === field.value
+                        )?.name || 'Select an account'}
+                        <ChevronsUpDownIcon className="opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      align="start"
+                      className="w-[var(--radix-popover-trigger-width)] p-0"
+                    >
+                      <Command>
+                        <CommandInput placeholder="Search accounts..." />
+                        <CommandList>
+                          <CommandEmpty>No account found.</CommandEmpty>
+                          <CommandGroup>
+                            {services?.length && selectedService?.serviceAccounts?.length
+                              ? selectedService.serviceAccounts?.map((account) => (
+                                  <CommandItem
+                                    key={account.id}
+                                    onSelect={() => {
+                                      field.onChange(account.id);
+                                      setAccountPopOverOpen(false);
+                                    }}
+                                    value={account.name}
+                                  >
+                                    {account.name}
+                                    <CheckIcon
+                                      className={cn(
+                                        'ml-auto',
+                                        form.getValues('serviceAccountId') === account.id
+                                          ? 'opacity-100'
+                                          : 'opacity-0'
+                                      )}
+                                    />
+                                  </CommandItem>
+                                ))
+                              : null}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
               </FormItem>
             )}
