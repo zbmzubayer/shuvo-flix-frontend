@@ -38,7 +38,7 @@ export function EditCustomerForm({ customer, setOpen }: EditCustomerFormProps) {
     resolver: zodResolver(customerSchema),
     defaultValues: {
       name: customer.name,
-      personalEmail: customer.personalEmail,
+      personalEmail: customer.personalEmail || undefined,
       phone: customer.phone,
       social: customer.social ?? undefined,
       socialLink: customer.socialLink,
