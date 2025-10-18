@@ -33,9 +33,11 @@ export default async function ServicePage() {
   const { totalActiveAccounts, expiredSoonAccounts, expiredAccounts } = services.reduce(
     (acc, service) => {
       for (const account of service.serviceAccounts) {
-        if (account.status !== SERVICE_ACCOUNT_STATUS.disabled) {
-          acc.totalActiveAccounts.push(account);
+        if (account.status === SERVICE_ACCOUNT_STATUS.disabled) {
+          continue;
         }
+
+        acc.totalActiveAccounts.push(account);
 
         const expiryDate = new Date(new Date(account.expiryDate).setHours(23, 59, 59, 999));
         const currentDate = new Date();
