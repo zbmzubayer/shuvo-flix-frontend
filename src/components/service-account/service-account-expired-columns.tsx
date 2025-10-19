@@ -76,6 +76,7 @@ export const serviceAccountExpiredTableColumns: ColumnDef<ServiceAccount>[] = [
     cell: ({ row }) => (
       <Badge
         className={cn('text-white', {
+          'bg-blue-500': row.original.payment === SERVICE_ACCOUNT_PAYMENT.pending,
           'bg-green-500': row.original.payment === SERVICE_ACCOUNT_PAYMENT.paid,
           'bg-yellow-500': row.original.payment === SERVICE_ACCOUNT_PAYMENT.due,
           'bg-red-500': row.original.payment === SERVICE_ACCOUNT_PAYMENT.unpaid,

@@ -133,6 +133,8 @@ export const orderTableColumns: ColumnDef<OrderDetails>[] = [
           'bg-green-500': row.original.status === ORDER_STATUS.paid,
           'bg-yellow-500': row.original.status === ORDER_STATUS.due,
           'bg-red-500': row.original.status === ORDER_STATUS.unpaid,
+          'bg-purple-500': row.original.status === ORDER_STATUS.gift,
+          'bg-cyan-500': row.original.status === ORDER_STATUS.combo,
         })}
       >
         {row.original.status}
