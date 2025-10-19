@@ -27,6 +27,7 @@ export const customerTableColumns: ColumnDef<CustomerDetails>[] = [
   {
     accessorKey: 'personalEmail',
     header: 'Personal Email',
+    cell: ({ row }) => row.original.personalEmail || 'N/A',
   },
   {
     accessorKey: 'phone',
