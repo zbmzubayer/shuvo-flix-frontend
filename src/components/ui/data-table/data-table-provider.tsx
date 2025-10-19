@@ -26,15 +26,17 @@ interface DataTableProviderProps<TData, TValue> {
   children: React.ReactNode;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  initialColumnFilters?: ColumnFiltersState;
 }
 
 export function DataTableProvider<TData, TValue>({
   children,
   columns,
   data,
+  initialColumnFilters = [],
 }: DataTableProviderProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(initialColumnFilters);
 
   // const [isMounted, setIsMounted] = useState(false);
 

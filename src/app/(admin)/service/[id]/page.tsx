@@ -118,6 +118,17 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
     },
   ];
 
+  const initialColumnFilters = [
+    {
+      id: 'status',
+      value: [
+        SERVICE_ACCOUNT_STATUS.new,
+        SERVICE_ACCOUNT_STATUS.partial,
+        SERVICE_ACCOUNT_STATUS.full,
+      ],
+    },
+  ];
+
   return (
     <div>
       <AppHeader title={`Accounts - ${service.name}`} />
@@ -177,7 +188,11 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
         </Card>
       </div>
       <div className="mt-5 space-y-2">
-        <DataTableProvider columns={serviceAccountTableColumns} data={accounts}>
+        <DataTableProvider
+          columns={serviceAccountTableColumns}
+          data={accounts}
+          initialColumnFilters={initialColumnFilters}
+        >
           <div className="flex items-center justify-between">
             <ServiceAccountDataTableToolbar filterFields={filterFields} />
             <ServiceAccountExportExcel fileName={service.name} serviceAccounts={accounts} />

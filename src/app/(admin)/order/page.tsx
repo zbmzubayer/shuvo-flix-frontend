@@ -64,11 +64,22 @@ export default async function OrderPage() {
     },
   ];
 
+  const initialColumnFilters = [
+    {
+      id: 'accountStatus',
+      value: [ACCOUNT_STATUS.active, ACCOUNT_STATUS.expiringSoon],
+    },
+  ];
+
   return (
     <div>
       <AppHeader title="Orders" />
       <div className="space-y-2">
-        <DataTableProvider columns={orderTableColumns} data={orders}>
+        <DataTableProvider
+          columns={orderTableColumns}
+          data={orders}
+          initialColumnFilters={initialColumnFilters}
+        >
           <div className="flex items-center justify-between">
             <OrderDataTableToolbar filterFields={filterFields} />
             <CreateOrderDialog />
