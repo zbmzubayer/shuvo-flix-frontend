@@ -1,8 +1,7 @@
-import { EyeIcon, PlusIcon, TicketCheckIcon, TicketMinusIcon, TicketXIcon } from 'lucide-react';
+import { EyeIcon, TicketCheckIcon, TicketMinusIcon, TicketXIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 
-import { CreateServiceForm } from '@/components/service/create-service-form';
-import { ServiceCard } from '@/components/service/service-card';
+import { ServiceList } from '@/components/service/service-list';
 import { serviceAccountExpiredTableColumns } from '@/components/service-account/service-account-expired-columns';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -13,8 +12,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogProvider,
-  DialogProviderTrigger,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
@@ -66,21 +63,7 @@ export default async function ServicePage() {
   return (
     <div>
       <AppHeader title="Services" />
-      <DialogProvider>
-        <DialogProviderTrigger asChild>
-          <Button size="sm">
-            <PlusIcon className="size-4" />
-            Create Service
-          </Button>
-        </DialogProviderTrigger>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Create Service</DialogTitle>
-          </DialogHeader>
-          <CreateServiceForm />
-        </DialogContent>
-      </DialogProvider>
-      <div className="mt-3 grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-3 dark:*:data-[slot=card]:bg-card">
+      <div className="grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-3 dark:*:data-[slot=card]:bg-card">
         <Card className="p-0 pb-5">
           <div className="flex items-center gap-2 border-b px-10 py-3">
             <TicketCheckIcon className="size-6 text-green-500" />
@@ -131,13 +114,14 @@ export default async function ServicePage() {
           </div>
         </Card>
       </div>
-      <div className="mt-5 grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-3 dark:*:data-[slot=card]:bg-card">
+      {/* <div className="mt-5 grid gap-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card *:data-[slot=card]:shadow-xs md:grid-cols-2 lg:grid-cols-3 dark:*:data-[slot=card]:bg-card">
         {services.length ? (
           services.map((service) => <ServiceCard key={service.id} service={service} />)
         ) : (
           <p>No services found</p>
         )}
-      </div>
+      </div> */}
+      <ServiceList services={services} />
     </div>
   );
 }
