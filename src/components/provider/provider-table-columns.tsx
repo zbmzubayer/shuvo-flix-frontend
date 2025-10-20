@@ -12,8 +12,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogProvider,
-  DialogProviderTrigger,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { UserAvatar } from '@/components/user-avatar';
 import { deleteProvider } from '@/services/provider.service';
@@ -53,11 +53,11 @@ export const providerTableColumns: ColumnDef<Provider>[] = [
       return (
         <div className="flex justify-center gap-2">
           <DialogProvider>
-            <DialogProviderTrigger asChild>
+            <DialogTrigger asChild>
               <Button className="size-8" variant="outline">
                 <EditIcon />
               </Button>
-            </DialogProviderTrigger>
+            </DialogTrigger>
             <DialogContent className="sm:max-w-md" onOpenAutoFocus={(e) => e.preventDefault()}>
               <DialogHeader>
                 <DialogTitle>Edit Provider</DialogTitle>

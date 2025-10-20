@@ -9,8 +9,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogProvider,
-  DialogProviderTrigger,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import type { ServiceWithServiceAccount } from '@/types/service';
 
@@ -35,11 +35,11 @@ export function ServiceCard({ service }: { service: ServiceWithServiceAccount })
               <h3 className="font-bold text-xl">{service.name}</h3>
             </Link>
             <DialogProvider>
-              <DialogProviderTrigger asChild>
+              <DialogTrigger asChild>
                 <Button className="size-8 text-yellow-600" variant="ghost">
                   <EditIcon />
                 </Button>
-              </DialogProviderTrigger>
+              </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                   <DialogTitle>Edit Service</DialogTitle>

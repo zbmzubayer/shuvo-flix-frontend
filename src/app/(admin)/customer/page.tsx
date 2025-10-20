@@ -13,8 +13,8 @@ import {
   DialogDescription,
   DialogHeader,
   DialogProvider,
-  DialogProviderTrigger,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { AppHeader } from '@/layouts/app-header';
 import { getAllCustomers } from '@/services/customer.service';
@@ -31,12 +31,12 @@ export default async function CustomerPage() {
             <CustomerDataTableToolbar />
             <CustomerExportExcel customers={customers} />
             <DialogProvider>
-              <DialogProviderTrigger asChild>
+              <DialogTrigger asChild>
                 <Button size="sm">
                   <PlusIcon />
                   Create Customer
                 </Button>
-              </DialogProviderTrigger>
+              </DialogTrigger>
               <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-md">
                 <div className="overflow-y-auto p-6">
                   <DialogHeader className="mb-2">

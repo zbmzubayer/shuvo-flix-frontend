@@ -11,8 +11,8 @@ import {
   DialogContent,
   DialogHeader,
   DialogProvider,
-  DialogProviderTrigger,
   DialogTitle,
+  DialogTrigger,
 } from '@/components/ui/dialog';
 import { AppHeader } from '@/layouts/app-header';
 import { getAllProviders } from '@/services/provider.service';
@@ -28,12 +28,12 @@ export default async function ProviderPage() {
     <div>
       <AppHeader title="Providers" />
       <DialogProvider>
-        <DialogProviderTrigger asChild>
+        <DialogTrigger asChild>
           <Button>
             <PlusIcon className="size-4" />
             Create Provider
           </Button>
-        </DialogProviderTrigger>
+        </DialogTrigger>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Create Provider</DialogTitle>
