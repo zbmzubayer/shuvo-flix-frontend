@@ -43,6 +43,7 @@ export function OrderDropdown({ order }: { order: OrderDetails }) {
           className="flex flex-col gap-0 p-0 sm:max-w-xl"
           onInteractOutside={(e) => e.preventDefault()}
           onOpenAutoFocus={(e) => e.preventDefault()}
+          onWheel={(e) => e.stopPropagation()}
         >
           <div className="overflow-y-auto p-6">
             <DialogHeader className="mb-2">

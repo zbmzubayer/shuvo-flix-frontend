@@ -1,24 +1,15 @@
-import { BadgeAlertIcon, BadgeCheckIcon, ListCheckIcon, ListXIcon, PlusIcon } from 'lucide-react';
+import { BadgeAlertIcon, BadgeCheckIcon, ListCheckIcon, ListXIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 
-import { CreateServiceAccountForm } from '@/components/service-account/create-service-account-form';
+import { CreateServiceAccountDialog } from '@/components/service-account/create-service-account-dialog';
 import { ServiceAccountExportExcel } from '@/components/service-account/service-account-export-excel';
 import { serviceAccountTableColumns } from '@/components/service-account/service-account-table-columns';
 import { ServiceAccountDataTableToolbar } from '@/components/service-account/service-account-table-toolbar';
-import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DataTable } from '@/components/ui/data-table';
 import type { FilterField } from '@/components/ui/data-table/data-table.interface';
 import { DataTablePagination } from '@/components/ui/data-table/data-table-pagination';
 import { DataTableProvider } from '@/components/ui/data-table/data-table-provider';
-import {
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogProvider,
-  DialogProviderTrigger,
-  DialogTitle,
-} from '@/components/ui/dialog';
 import { AppHeader } from '@/layouts/app-header';
 import { getAllDealers } from '@/services/dealer.service';
 import { getServiceById } from '@/services/service.service';
@@ -196,25 +187,7 @@ export default async function ServiceAccountPage({ params }: { params: Promise<{
           <div className="flex items-center justify-between">
             <ServiceAccountDataTableToolbar filterFields={filterFields} />
             <ServiceAccountExportExcel fileName={service.name} serviceAccounts={accounts} />
-            <DialogProvider>
-              <DialogProviderTrigger asChild>
-                <Button size="sm">
-                  <PlusIcon />
-                  Create account
-                </Button>
-              </DialogProviderTrigger>
-              <DialogContent className="flex flex-col gap-0 p-0 sm:max-w-xl">
-                <div className="overflow-y-auto p-6">
-                  <DialogHeader className="mb-2">
-                    <DialogTitle>Create Account</DialogTitle>
-                    <DialogDescription>
-                      Please enter the details for the new account.
-                    </DialogDescription>
-                  </DialogHeader>
-                  <CreateServiceAccountForm />
-                </div>
-              </DialogContent>
-            </DialogProvider>
+            <CreateServiceAccountDialog />
           </div>
           <DataTable />
           <DataTablePagination />

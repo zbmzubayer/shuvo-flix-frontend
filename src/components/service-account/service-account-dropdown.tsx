@@ -89,6 +89,7 @@ export function ServiceAccountDropdown({ account }: { account: ServiceAccount })
         <DialogContent
           className="flex flex-col gap-0 p-0 sm:max-w-xl"
           onOpenAutoFocus={(e) => e.preventDefault()}
+          onWheel={(e) => e.stopPropagation()}
         >
           <div className="overflow-y-auto p-6">
             <DialogHeader className="mb-2">
